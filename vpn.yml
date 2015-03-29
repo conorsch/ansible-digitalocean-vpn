@@ -11,6 +11,3 @@
   tasks:
   - include: tasks/base.yml
   - include: tasks/vpn.yml
-
-  handlers:
-  - include: handlers/vpn.yml
