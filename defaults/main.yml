@@ -1,0 +1,16 @@
+---
+# "client_id" is deprecated in DigitalOcean API as of v2:
+# https://www.digitalocean.com/community/questions/apiv2-is-client_id-obsolete
+# do_client_id: ansible_env.VAR # YOUR_CLIENT_ID_HERE
+#
+# You'll need to export the following environment variables
+do_api_key: "{{ansible_env.DO_API_KEY}}"
+do_client_id: "{{ansible_env.DO_CLIENT_ID}}"
+do_ssh_key_id: "{{ansible_env.DO_SSH_KEY_ID}}"
+
+
+# DigitalOcean parameters
+region_id: 5
+size_id: 66
+#image_id: 1505447
+image_id: 9801950

@@ -1,30 +1,31 @@
 ---
 - hosts: localhost
-  gather_facts: false
-  vars:
-  - region_id: 5
-  - size_id: 66
-  - image_id: 1505447
+  connection: local
+  gather_facts: true
+  vars_files:
+    - defaults/main.yml
+  
   tasks:
   - easy_install: name=dopy
-  - digital_ocean: >
-      state=present
-      client_id={{ do_client_id }}
-      api_key={{ do_api_key }}
-      command=droplet
-      name=vpn
-      size_id={{ size_id }}
-      region_id={{ region_id }}
-      image_id={{ image_id }}
-      ssh_key_ids={{ do_ssh_key_id }}
-      wait_timeout=200
-    register: my_droplet
-  - lineinfile: >
-      dest=/etc/hosts
-      regexp="vpn$"
-      state=present
-      line="{{ my_droplet.droplet.ip_address }} vpn"
-    sudo: yes
-  - shell: 'ssh-keygen -f "$HOME/.ssh/known_hosts" -R vpn'
+  - digital_ocean:
+      command: droplet
+      state: present
+      name: vpn
+      unique_name: true
+
+      size_id: "{{ size_id }}"
+      region_id: "{{ region_id }}"
+      image_id: "{{ image_id }}"
+
+      client_id: "{{ do_client_id }}"
+      api_key: "{{ do_api_key }}"
+      ssh_key_ids: "{{ do_ssh_key_id }}"
+
+      wait_timeout: 200
+
+    register: vpn_droplet
+    tags:
+      - digital_ocean
+      - provision
 
 
