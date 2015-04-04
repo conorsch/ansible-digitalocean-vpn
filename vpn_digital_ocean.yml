@@ -28,4 +28,12 @@
       - digital_ocean
       - provision
 
+  - debug: msg="ID is {{ vpn_droplet.droplet.id  }}"
+  - debug: msg="IP is {{ vpn_droplet.droplet.ip_address  }}"
+  - debug: var=vpn_droplet
+
+
+- hosts: vpn_droplet
+  roles:
+    - { role: '.', tags: 'vpn' }
 
