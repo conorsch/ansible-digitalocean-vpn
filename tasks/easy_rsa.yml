@@ -1,0 +1,25 @@
+---
+- name: copy vars file for cert generation
+  template:
+    src: easy_rsa_vars.j2 
+    dest: /etc/openvpn/easy-rsa/vars
+  tags:
+    - easyrsa
+
+- name: ensure server certificate exists
+  action: easyrsa_cert
+      state=present
+      ca_root=/etc/openvpn/easy-rsa/
+      cn={{ssl_key_server_name}}
+      key_usage=server
+  tags:
+    - easyrsa
+
+- name: ensure client certificate exists
+  action: easyrsa_cert
+    state=present
+    ca_root=/etc/openvpn/easy-rsa/
+    cn="{{ssl_key_client_name}}"
+    key_usage=client
+  tags:
+    - easyrsa

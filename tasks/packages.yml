@@ -6,4 +6,6 @@
   apt: pkg={{ item }} state=latest
   with_items:
   - git
+  - openvpn
+  - easy-rsa
   - python-keyczar # required to use accelerated mode

@@ -1,14 +1,14 @@
 # {{ ansible_managed }}
 
 dev tun
-ifconfig {{ server_addr }} {{ client_addr }}
-secret {{ keyfile }}
+ifconfig {{ openvpn_server_ip }} {{ openvpn_client_ip }}
+secret {{ openvpn_keyfile }}
 
-{% if compression is defined and compression %}
+{% if openvpn_compression is defined and openvpn_compression %}
 comp-lzo
-
 {% endif %}
-keepalive {{ keepalive }}
+
+keepalive {{ openvpn_keepalive }}
 ping-timer-rem
 persist-tun
 persist-key

@@ -14,7 +14,7 @@ CURRENTSTATS='/var/run/openvpn.current_stats'
 PREVSTATS='/var/run/openvpn.prev_stats'
 SLEEPFILE='/var/run/openvpn-isup.sleep'
 
-SLEEPTIME={{ vpn_sleep_time }}
+SLEEPTIME={{ openvpn_sleep_time }}
 
 if [ -f "${SLEEPFILE}" ]; then
   NOW="$(date +%s)"

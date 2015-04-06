@@ -1,0 +1,206 @@
+#!/usr/bin/env python
+
+import os
+import os.path
+import subprocess
+import re
+import pipes
+import tempfile
+
+def shell_quote(s):
+    if not s:
+        return '""'
+    else:
+        return pipes.quote(s)
+
+def check_cn(cn):
+    return cn != 'ca' and bool(re.match('^[a-zA-Z0-9._-]+$', cn))
+
+def easyrsa_cmd(root, *args):
+    cmd = ' '.join(shell_quote(arg) for arg in args)
+    final_cmd = 'cd {0} && . ./vars && {1}'.format(shell_quote(root), cmd)
+    return subprocess.check_output(final_cmd, shell=True)
+
+def find_in_db(root, cn):
+    keydir = os.path.join(root, 'keys')
+    db_txt = os.path.join(keydir, 'index.txt')
+    pattern = '/CN=' + cn + '/'
+    valid = None
+    for line in open(db_txt):
+        if pattern not in line:
+            continue
+        valid, issue_date, revoke_date, seq, unknown, subject = line.strip().split('\t', 5)
+    if valid is None:
+        return None, None
+    return valid == 'V', seq
+
+def cert_recover(root, cn):
+    keydir = os.path.join(root, 'keys')
+    cert = os.path.join(keydir, cn + '.crt')
+    if os.path.getsize(cert) > 0:
+        return
+
+    valid, seq = find_in_db(root, cn)
+    if valid is None:
+        return
+
+    saved_cert = os.path.join(keydir, seq + '.pem')
+    cert_pem = open(saved_cert).read()
+    with open(cert, 'w') as f:
+        f.write(cert_pem)
+
+    return 'present' if valid else 'revoked'
+
+def check_status(root, cn):
+    keydir = os.path.join(root, 'keys')
+    cert = os.path.join(keydir, cn + '.crt')
+    crl = os.path.join(keydir, 'crl.pem')
+    if not os.path.exists(cert):
+        return 'absent'
+
+    if not os.path.exists(crl):
+        # cannot be revoked if there's no CRL
+        return 'present'
+
+    with tempfile.NamedTemporaryFile(dir=keydir, prefix='revoketest', suffix='.pem', delete=False) as test_pem:
+        # compatibility with revoke-full script
+        ca_paths = [os.path.join(keydir, ca_crt) for ca_crt in ('export-ca.crt', 'ca.crt')]
+        for ca_path in ca_paths:
+            if os.path.exists(ca_path):
+                print >>test_pem, open(ca_path).read()
+                break
+        else:
+            raise ValueError('CA certificate not found')
+        print >>test_pem, open(crl).read()
+        test_pem.close()
+
+        result = easyrsa_cmd(root, 'openssl', 'verify', '-CAfile', test_pem.name, '-crl_check', cert)
+
+        # sigh. exit(23) was apparently impossible
+        if 'error 23 at 0 depth lookup:certificate revoked' in result:
+            return 'revoked'
+        elif ': OK' in result:
+            return 'present'
+        else:
+            try:
+                ret = cert_recover(root, cn)
+            except Exception as exc:
+                raise ValueError('Error recovering certificate: {0}'.format(exc))
+            if ret is not None:
+                return ret
+            raise ValueError('Error verifying certificate: {0}'.format(result))
+
+def check_key_usage(root, cn):
+    # easyRSA does not generate server+client certs, so it's either
+    # one, or the other
+
+    keydir = os.path.join(root, 'keys')
+    cert = os.path.join(keydir, cn + '.crt')
+    if not os.path.exists(cert):
+        return None
+
+    result = easyrsa_cmd(root, 'openssl', 'x509', '-in', cert, '-noout', '-text')
+    next_line_is_usage = False
+
+    for line in result.splitlines():
+        line = line.strip()
+        if line == 'X509v3 Extended Key Usage:':
+            next_line_is_usage = True
+        elif next_line_is_usage:
+            if line == 'TLS Web Server Authentication':
+                return 'server'
+            elif line == 'TLS Web Client Authentication':
+                return 'client'
+            else:
+                return 'unknown: ' + line
+
+def cert_create(root, cn, key_usage):
+    if key_usage == 'server':
+        return easyrsa_cmd(root, './pkitool', '--server', cn)
+    else:
+        return easyrsa_cmd(root, './pkitool', cn)
+
+def cert_remove(root, cn):
+    keydir = os.path.join(root, 'keys')
+    cert = os.path.join(keydir, cn + '.crt')
+    if os.path.exists(cert):
+        os.unlink(cert)
+        return 'Certificate file removed'
+    return 'Certificate file did not exist'
+
+def cert_revoke(root, cn):
+    return easyrsa_cmd(root, './revoke-full', cn)
+
+def load_cert(root, cn):
+    keydir = os.path.join(root, 'keys')
+    cert = os.path.join(keydir, cn + '.crt')
+    key = os.path.join(keydir, cn + '.key')
+    ca_cert = os.path.join(keydir, 'ca.crt')
+
+    return {
+        'cert': open(cert).read(),
+        'key': open(key).read(),
+        'ca_cert': open(ca_cert).read(),
+    }
+
+def main():
+    module = AnsibleModule(
+        argument_spec=dict(
+            ca_root=dict(required=True),
+            cn=dict(required=True),
+            state=dict(default='present'),
+            check=dict(default='no'),
+            key_usage=dict(default='client', choices=['client', 'server']),
+        ),
+        supports_check_mode=True
+    )
+
+    ca_root = module.params.get('ca_root')
+    cn = module.params.get('cn')
+    state = module.params.get('state')
+    check = module.params.get('check') in BOOLEANS_TRUE
+    key_usage = module.params.get('key_usage')
+
+    if not check_cn(cn):
+        module.fail_json(msg='Invalid common name (ASCII letters, digits and ._- allowed)')
+
+    if not os.path.exists(ca_root):
+        module.fail_json(msg='EasyRSA root does not exist')
+
+    try:
+        current_state = check_status(ca_root, cn)
+    except Exception as exc:
+        module.fail_json(msg=str(exc))
+
+    ret = {
+        'previous_state': current_state,
+        'state': state,
+        'changed': state != current_state,
+    }
+
+    if state in ('present', 'revoked'):
+        ret['key_usage'] = check_key_usage(ca_root, cn)
+        if ret['key_usage'] and not module.check_mode and not check and key_usage != ret['key_usage']:
+            module.fail_json(msg='Cannot change key usage from {0} to {1}'.format(ret['key_usage'], key_usage))
+
+    if module.check_mode or check or state == current_state:
+        if current_state == 'present':
+            ret.update(load_cert(ca_root, cn))
+        module.exit_json(**ret)
+
+    if state == 'present':
+        ret['output'] = cert_create(ca_root, cn, key_usage)
+        ret.update(load_cert(ca_root, cn))
+    elif state == 'absent':
+        ret['output'] = cert_remove(ca_root, cn)
+    elif state == 'revoked':
+        ret['output'] = cert_revoke(ca_root, cn)
+    else:
+        module.fail_json(msg='State must be present, absent or revoked')
+
+    module.exit_json(**ret)
+
+# this is magic, see lib/ansible/module_common.py
+#<<INCLUDE_ANSIBLE_MODULE_COMMON>>
+main()
+
