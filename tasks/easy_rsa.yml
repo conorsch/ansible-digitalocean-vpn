@@ -1,4 +1,16 @@
 ---
+
+- name: copy easy-rsa files to openvpn dir
+  command: cp -r /usr/share/easy-rsa/ /etc/openvpn
+
+- name: ensure key directory exists
+  file:
+    path: /etc/openvpn/easy-rsa/keys
+    state: directory
+    owner: root
+    group: root
+    mode: 0750
+
 - name: copy vars file for cert generation
   template:
     src: easy_rsa_vars.j2 
