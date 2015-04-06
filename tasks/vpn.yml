@@ -1,27 +1,9 @@
 ---
-- name: create masquerading script
-  copy:
-    src: files/do_masquerade.sh
-    dest: /usr/local/sbin/do_masquerade
-    owner: root
-    group: root
-    mode: 0755
-
 - name: create openvpn config
   template:
     src: templates/server.conf.j2
     dest: /etc/openvpn/server.conf
     backup: yes
-  notify:
-    - restart openvpn
-
-- name: manage openvpn key
-  copy:
-    src: files/{{ openvpn_keyfile }}
-    dest: /etc/openvpn/{{ openvpn_keyfile }}
-    owner: root
-    group: root
-    mode: 0600
   notify:
     - restart openvpn
 
