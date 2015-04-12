@@ -5,10 +5,13 @@
   vars_files:
     - defaults/main.yml
   tasks:
-    # dopy is required for ansible digital_ocean module
-  - easy_install: name=dopy
+  
+  # dopy is required for ansible digital_ocean module
+  - name: ensure dopy is installed (for digitalocean API)
+    easy_install: name=dopy
 
-  - digital_ocean:
+  - name: create digitalocean droplet
+    digital_ocean:
       command: droplet
       state: present
       name: vpn
@@ -43,5 +46,5 @@
 
 - hosts: do_droplets
   roles:
-    - { role: '.', tags: 'vpn' }
+    - { role: server, tags: 'vpn' }
 
