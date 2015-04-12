@@ -1,7 +1,7 @@
 ---
 # dopy is required for ansible digital_ocean module
 - name: ensure dopy is installed (for digitalocean API)
-easy_install: name=dopy
+  easy_install: name=dopy
 
 - name: create digitalocean droplet
   digital_ocean:
@@ -24,6 +24,8 @@ easy_install: name=dopy
     - digital_ocean
     - provision
 
+  # populate dynamic inventory so newly created droplet can be 
+  # referenced by the "server" subrole in parent playbook
 - name: Add vpn droplet to inventory
   add_host:
     name: "{{ vpn_droplet.droplet.ip_address }}"
@@ -36,8 +38,3 @@ easy_install: name=dopy
 
 - name: add new IP to SSH known_hosts
   shell: 'ssh-keyscan -H -T 10 {{ vpn_droplet.droplet.ip_address }} >> "$HOME/.ssh/known_hosts"'
-
-- hosts: do_droplets
-  roles:
-    - { role: server, tags: 'vpn' }
-
