@@ -13,24 +13,3 @@ do_ssh_key_id: "{{ansible_env.DO_SSH_KEY_ID}}"
 region_id: 5
 size_id: 66
 image_id: 9801950
-
-# OpenVPN configuration
-openvpn_server_ip: 10.8.0.1
-openvpn_client_ip: 10.8.0.2
-openvpn_keepalive: "10 60"
-openvpn_keyfile: static.key
-openvpn_compression: true
-openvpn_sleep_time: 300
-
-
-
-# SSL cert vars for easy-rsa
-ssl_key_country: "US"
-ssl_key_province: "CA"
-ssl_key_city: "SanFrancisco"
-ssl_key_org: "ISP"
-ssl_key_email: "{{lookup('env', 'EMAIL_ADDRESS') | default('person@example.com')}}"
-ssl_key_ou: "PersonalVPN"
-# X509 Subject Field
-ssl_key_server_name: "server"
-ssl_key_client_name: "client"
