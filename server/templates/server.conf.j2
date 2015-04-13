@@ -2,9 +2,9 @@ port 1194
 proto udp
 dev tun
 
-ca ca.crt
-cert server.crt
-key server.key  # This file should be kept secret
+ca easy-rsa/keys/ca.crt
+cert easy-rsa/keys/server.crt
+key easy-rsa/keys/server.key  # This file should be kept secret
 dh dh2048.pem
 
 server 10.8.0.0 255.255.255.0
