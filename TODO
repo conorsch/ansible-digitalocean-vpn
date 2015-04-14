@@ -1,4 +1,7 @@
 ## TODOs
 
-* Autogenerate VPN key for local use
-* Let enduser parametrize certain settings like DO Region
+* client setup
+** synchronize ssl key
+** create network manager connection
+** activate network manager connection
+
