@@ -9,7 +9,7 @@
 
 - name: generate dh2048 pem file
   command: openssl dhparam -out /etc/openvpn/dh2048.pem 2048
-  creates: /etc/openvpn/dh2048.pem
+  #creates: /etc/openvpn/dh2048.pem
 
 - name: enable ipv4 forwarding
   sysctl:
