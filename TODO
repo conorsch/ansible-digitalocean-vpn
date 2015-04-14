@@ -1,7 +1,12 @@
 ## TODOs
 
+* manage host facts
+** during client droplet creation, register client in dynamic inventory
+** during server config, use client dynamic inventory entry for `synchronize`
+*** probably need a `delegate_to` call
+
 * client setup
 ** synchronize ssl key
 ** create network manager connection
 ** activate network manager connection
-
+L
