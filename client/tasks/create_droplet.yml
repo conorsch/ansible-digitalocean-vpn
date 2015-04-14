@@ -28,10 +28,10 @@
   # referenced by the "server" subrole in parent playbook
 - name: add digitalocean vpn droplet to inventory
   add_host:
-    name: "{{ vpn_droplet.droplet.ip_address }}"
+    name: digitalocean_vpn_server
+    ansible_ssh_host: "{{ vpn_droplet.droplet.ip_address }}"
     ansible_ssh_user: root
     ansible_ssh_private_key_file: ~/.ssh/digital_ocean
-    groups: digitalocean_vpn_server
 
   # populate dynamic inventory so client machine
   # (i.e., the machine running this subrole)
@@ -39,7 +39,7 @@
 - name: add client machine to dynamic inventory
   add_host:
     name: "{{ inventory_hostname }}"
-    groups: digitalocean_vpn_client
+    groups: digitalocean_vpn_clients
 
 - name: flush old IPs from SSH known_hosts
   shell: 'ssh-keygen -f "$HOME/.ssh/known_hosts" -R {{ vpn_droplet.droplet.ip_address }}'
