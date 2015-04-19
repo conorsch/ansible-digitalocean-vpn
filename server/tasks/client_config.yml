@@ -3,7 +3,7 @@
 - name: copy ovpn file to vpn client (from vpn_server to vpn_client)
   fetch:
     src: /etc/openvpn/easy-rsa/keys/client.ovpn
-    dest: /home/conor/gits/ansible-roles/ansible-digitalocean-vpn/files/
+    dest: openvpn_files/
     mode: 0644
     flat: yes
     fail_on_missing: yes
@@ -11,7 +11,7 @@
 - name: copy key file to vpn client (from vpn_server to vpn_client)
   fetch:
     src: /etc/openvpn/easy-rsa/keys/client.key
-    dest: /home/conor/gits/ansible-roles/ansible-digitalocean-vpn/files/
+    dest: openvpn_files/
     mode: 0644
     flat: yes
     fail_on_missing: yes
@@ -19,7 +19,7 @@
 - name: copy cert file to vpn client (from vpn_server to vpn_client)
   fetch:
     src: /etc/openvpn/easy-rsa/keys/client.crt
-    dest: /home/conor/gits/ansible-roles/ansible-digitalocean-vpn/files/
+    dest: openvpn_files/
     mode: 0644
     flat: yes
     fail_on_missing: yes
@@ -27,7 +27,7 @@
 - name: copy ca file to vpn client (from vpn_server to vpn_client)
   fetch:
     src: /etc/openvpn/easy-rsa/keys/ca.crt
-    dest: /home/conor/gits/ansible-roles/ansible-digitalocean-vpn/files/
+    dest: openvpn_files/
     mode: 0644
     flat: yes
     fail_on_missing: yes
