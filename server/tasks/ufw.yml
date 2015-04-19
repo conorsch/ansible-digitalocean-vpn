@@ -2,11 +2,17 @@
 - name: allow ssh through firewall
   ufw:
     rule: allow
-    name: ssh
+    port: 22
+    proto: tcp
 
 - name: allow openvpn through firewall
   ufw:
     rule: allow
     port: 1194
     proto: udp
+
+- name: ensure ufw is running
+  service:
+    name: ufw
+    state: running
     
