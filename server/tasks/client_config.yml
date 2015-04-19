@@ -1,0 +1,41 @@
+---
+# pass newly configured keys to client host
+- name: copy ovpn file to vpn client (from vpn_server to vpn_client)
+  fetch:
+    src: /etc/openvpn/easy-rsa/keys/client.ovpn
+    dest: /home/conor/gits/ansible-roles/ansible-digitalocean-vpn/files/
+    mode: 0644
+    flat: yes
+    fail_on_missing: yes
+
+- name: copy key file to vpn client (from vpn_server to vpn_client)
+  fetch:
+    src: /etc/openvpn/easy-rsa/keys/client.key
+    dest: /home/conor/gits/ansible-roles/ansible-digitalocean-vpn/files/
+    mode: 0644
+    flat: yes
+    fail_on_missing: yes
+
+- name: copy cert file to vpn client (from vpn_server to vpn_client)
+  fetch:
+    src: /etc/openvpn/easy-rsa/keys/client.crt
+    dest: /home/conor/gits/ansible-roles/ansible-digitalocean-vpn/files/
+    mode: 0644
+    flat: yes
+    fail_on_missing: yes
+
+- name: copy ca file to vpn client (from vpn_server to vpn_client)
+  fetch:
+    src: /etc/openvpn/easy-rsa/keys/ca.crt
+    dest: /home/conor/gits/ansible-roles/ansible-digitalocean-vpn/files/
+    mode: 0644
+    flat: yes
+    fail_on_missing: yes
+
+#- name: copy key file to vpn client (from vpn_server to vpn_client)
+#  synchronize:
+#    mode: pull
+#    src: /etc/openvpn/easy-rsa/keys/client.crt
+#    dest: /etc/openvpn/client.crt
+#    mode: 0644
+#  delegate_to: digitalocean_vpn_server

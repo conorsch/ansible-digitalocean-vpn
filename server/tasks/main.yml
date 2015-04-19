@@ -3,3 +3,5 @@
 - include: packages.yml
 - include: easy_rsa.yml
 - include: vpn.yml
+- include: client_config.yml
+
