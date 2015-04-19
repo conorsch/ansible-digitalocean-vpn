@@ -9,3 +9,4 @@
   - openvpn
   - easy-rsa
   - python-keyczar # required to use accelerated mode
+  - ufw
