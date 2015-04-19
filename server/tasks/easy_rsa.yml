@@ -2,6 +2,8 @@
 
 - name: copy easy-rsa files to openvpn dir
   command: cp -r /usr/share/easy-rsa/ /etc/openvpn
+  args:
+    creates: /etc/openvpn/easy-rsa
   tags:
     - easyrsa
 
@@ -27,7 +29,7 @@
   args:
     chdir: /etc/openvpn/easy-rsa
     executable: /bin/bash
-    creates: /etc/openvpn/easy-rsa/ca.crt
+    creates: /etc/openvpn/easy-rsa/keys/ca.crt
   tags:
     - easyrsa
 
