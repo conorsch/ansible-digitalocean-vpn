@@ -16,6 +16,7 @@
   sysctl:
     name: net.ipv4.ip_forward
     value: 1
+  changed_when: false
 
 - name: start openvpn server
   service:
