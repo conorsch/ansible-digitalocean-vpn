@@ -1,0 +1,12 @@
+---
+- name: allow ssh through firewall
+  ufw:
+    rule: allow
+    name: ssh
+
+- name: allow openvpn through firewall
+  ufw:
+    rule: allow
+    port: 1194
+    proto: udp
+    
