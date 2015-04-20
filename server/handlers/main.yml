@@ -1,3 +1,6 @@
 ---
 - name: restart openvpn
   service: name=openvpn enabled=yes state=restarted
+
+- name: restart ufw
+  service: name=ufw enabled=yes state=restarted
