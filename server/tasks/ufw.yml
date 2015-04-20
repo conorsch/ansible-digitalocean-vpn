@@ -4,14 +4,21 @@
     rule: allow
     port: 22
     proto: tcp
+  notify: restart ufw
 
 - name: allow openvpn through firewall
   ufw:
     rule: allow
     port: 1194
+  notify: restart ufw
+
+- name: copy ufw before.rules config file
+  copy:
+    src: before.rules
+    dest: /etc/ufw/before.rules
+  notify: restart ufw
 
 - name: ensure ufw is running
   service:
     name: ufw
     state: running
-    
