@@ -14,7 +14,7 @@
 
 - name: copy ufw before.rules config file
   copy:
-    src: before.rules
+    src: ufw_before.rules
     dest: /etc/ufw/before.rules
   notify: restart ufw
 
