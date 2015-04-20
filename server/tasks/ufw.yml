@@ -9,7 +9,6 @@
   ufw:
     rule: allow
     port: 1194
-    proto: udp
 
 - name: ensure ufw is running
   service:
