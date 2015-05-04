@@ -2,9 +2,9 @@ port 1194
 proto udp
 dev tun
 
-ca easy-rsa/keys/ca.crt
-cert easy-rsa/keys/server.crt
-key easy-rsa/keys/server.key  # This file should be kept secret
+ca /etc/openvpn/easy-rsa/keys/ca.crt
+cert /etc/openvpn/easy-rsa/keys/server.crt
+key /etc/openvpn/easy-rsa/keys/server.key
 dh dh2048.pem
 
 server 10.8.0.0 255.255.255.0
@@ -23,7 +23,7 @@ group nogroup
 persist-key
 persist-tun
 
-status openvpn-status.log
+status /var/log/openvpn-status.log
 
 log-append  openvpn.log
 

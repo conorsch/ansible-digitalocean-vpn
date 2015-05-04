@@ -29,4 +29,5 @@
 - name: ensure ufw is running
   service:
     name: ufw
-    state: running
+    enabled: yes
+    state: started

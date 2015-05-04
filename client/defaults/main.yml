@@ -10,6 +10,7 @@ do_ssh_key_id: "{{ansible_env.DO_SSH_KEY_ID}}"
 
 
 # DigitalOcean instance parameters
-region_id: 5
+# region '3' is SFO1
+region_id: 3
 size_id: 66
 image_id: 9801950

@@ -6,7 +6,7 @@
     dest: openvpn_files/
     mode: 0644
     flat: yes
-    fail_on_missing: yes
+    # don't fail on missing, since manual setup still possible
 
 - name: copy key file to vpn client (from vpn_server to vpn_client)
   fetch:
@@ -32,10 +32,3 @@
     flat: yes
     fail_on_missing: yes
 
-#- name: copy key file to vpn client (from vpn_server to vpn_client)
-#  synchronize:
-#    mode: pull
-#    src: /etc/openvpn/easy-rsa/keys/client.crt
-#    dest: /etc/openvpn/client.crt
-#    mode: 0644
-#  delegate_to: digitalocean_vpn_server

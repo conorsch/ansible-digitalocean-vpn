@@ -11,7 +11,7 @@ ssl_key_country: "US"
 ssl_key_province: "CA"
 ssl_key_city: "SanFrancisco"
 ssl_key_org: "ISP"
-ssl_key_email: "person@example.com"
+ssl_key_email: "person2@example.com"
 ssl_key_ou: "PersonalVPN"
 # X509 Subject Field
 ssl_key_server_name: "server"
