@@ -1,12 +1,11 @@
 ## TODOs
 
-* manage host facts
-** during client droplet creation, register client in dynamic inventory
-** during server config, use client dynamic inventory entry for `synchronize`
-*** probably need a `delegate_to` call
+* server setup
+** support multiple clients, e.g. laptop and phone
 
 * client setup
-** synchronize ssl key
+** add files to sane default location, e.g. /etc/openvpn
+** try to use `synchronize` module for syncing hosts
+** ensure client packages are installed, if necessary
 ** create network manager connection
 ** activate network manager connection
-L
