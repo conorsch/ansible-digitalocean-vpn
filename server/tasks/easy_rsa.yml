@@ -57,8 +57,8 @@
     chdir: /etc/openvpn/easy-rsa
     executable: /bin/bash
     creates: /etc/openvpn/easy-rsa/keys/server.crt
-  register: server_cert_result
-  failed_when: '"failed" in server_cert_result.stderr'
+#  register: server_cert_result
+#  failed_when: '"failed" in server_cert_result.stderr'
   tags:
     - easyrsa
 
@@ -68,8 +68,8 @@
     chdir: /etc/openvpn/easy-rsa
     executable: /bin/bash
     creates: /etc/openvpn/easy-rsa/keys/{{ssl_key_client_name}}.crt
-  register: client_cert_result
-  failed_when: '"failed" in client_cert_result.stderr'
+#  register: client_cert_result
+#  failed_when: '"failed" in client_cert_result.stderr'
   tags:
     - easyrsa
 
