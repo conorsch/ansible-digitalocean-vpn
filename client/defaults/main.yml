@@ -13,4 +13,4 @@ do_ssh_key_id: "{{ansible_env.DO_SSH_KEY_ID}}"
 # region '3' is SFO1
 region_id: 3
 size_id: 66
-image_id: 9801950
+image_id: 11836690
