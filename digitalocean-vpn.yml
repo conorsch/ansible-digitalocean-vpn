@@ -2,7 +2,7 @@
 - name: configure vpn client
   hosts: digitalocean_vpn_client
   roles:
-    - { role: digitalocean-vpn/client, tags: vpn }
+    - { role: digitalocean-vpn/create-droplet, tags: vpn }
 
 - name: configure vpn server
   hosts: digitalocean_vpn_server
