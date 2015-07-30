@@ -2,12 +2,12 @@
 - name: create vpn server
   hosts: digitalocean_vpn_client
   roles:
-    - { role: digitalocean-vpn/create-droplet, tags: vpn }
+    - { role: roles/create-droplet, tags: vpn }
 
 - name: configure vpn server
   hosts: digitalocean_vpn_server
   roles:
-    - { role: digitalocean-vpn/server, tags: vpn}
+    - { role: roles/configure-server, tags: vpn}
     - { role: zufallsheld.ssh-hardening, tags: ssh-hardening }
 
 - name: configure vpn client
@@ -17,7 +17,7 @@
       private: yes
   hosts: digitalocean_vpn_client
   roles:
-    - { role: digitalocean-vpn/client, tags: vpn }
+    - { role: roles/configure-client, tags: vpn }
   # sudo required for writing NetworkManager connection files,
   # which must be 600 root.
   sudo: yes
