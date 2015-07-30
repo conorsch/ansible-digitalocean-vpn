@@ -1,10 +1,12 @@
-## Ansible playbooks
+# ansible-digitalocean-vpn
+Ansible role for creating personal VPN via DigitalOcean.
 
-This is a collection of Ansible playbooks I use to automate certain tasks.
-They are intended for personal use only and chances are will not suite your needs.
-However bugrepots and pull requests are welcome.
+## Requirements
+You should have the following already installed:
 
-All examples below imply that you have setup inventory for you.
+* ansible
+*
+
 
 ## Base image
 
