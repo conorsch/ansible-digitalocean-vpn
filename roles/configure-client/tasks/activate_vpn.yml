@@ -4,7 +4,8 @@
   register: vpn_status
   changed_when: false
 
-- debug: ensure vpn connection is activated
-  notify: activate vpn connection
+- name: ensure vpn connection is activated
+  command: nmcli con up id "{{ digitalocean_vpn_nm_connection_name }}"
+  when: vpn_status.stdout == "no"
   changed_when: vpn_status.stdout == "no"
 
