@@ -7,6 +7,7 @@
 do_api_key: "{{ansible_env.DO_API_KEY}}"
 do_client_id: "{{ansible_env.DO_CLIENT_ID}}"
 do_ssh_key_id: "{{ansible_env.DO_SSH_KEY_ID}}"
+do_ssh_key_file: "{{ansible_env.DO_SSH_KEY_FILE}}"
 
 
 # DigitalOcean instance parameters
