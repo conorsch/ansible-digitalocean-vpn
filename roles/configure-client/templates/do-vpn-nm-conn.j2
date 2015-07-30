@@ -6,12 +6,13 @@ timestamp=1431630297
 
 [vpn]
 service-type=org.freedesktop.NetworkManager.openvpn
-key=/etc/openvpn/client.key
+ca={{ digitalocean_vpn_client_cert_dir }}/ca.crt
+key={{ digitalocean_vpn_client_cert_dir }}/client.key
+cert={{ digitalocean_vpn_client_cert_dir }}/client.crt
+
 comp-lzo=yes
-cert=/etc/openvpn/client.crt
 remote=104.236.140.196
 connection-type=tls
-ca=/etc/openvpn/ca.crt
 cert-pass-flags=0
 
 [ipv6]
