@@ -1,0 +1,18 @@
+{{ digitalocean_vpn_client_name }}
+dev tun
+proto udp
+remote {{ vpn_droplet.ip_address }} 1194
+remote-cert-tls server
+ns-cert-type server
+
+ca {{ digitalocean_vpn_client_cert_dir }}/ca.crt
+cert {{ digitalocean_vpn_client_cert_dir }}/phone.crt
+key {{ digitalocean_vpn_client_cert_dir }}/phone.key
+
+resolv-retry infinite
+nobind
+persist-key
+persist-tun
+verb 3
+
+comp-lzo
