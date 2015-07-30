@@ -9,7 +9,7 @@
 
 - name: copy key files to openvpn directory
   copy:
-    src: openvpn_files/client.{{item}}
+    src: openvpn_files/{{item}}
     dest: /etc/openvpn/
   with_items:
     - client.crt

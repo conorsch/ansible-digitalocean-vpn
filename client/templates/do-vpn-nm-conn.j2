@@ -1,17 +1,17 @@
 [connection]
-id=DigitalOcean VPN
+id={{ digitalocean_vpn_nm_connection_name }}
 uuid={{ '' | uuid }}
 type=vpn
 timestamp=1431630297
 
 [vpn]
 service-type=org.freedesktop.NetworkManager.openvpn
-key={{ digitalocean_vpn_fetched_files_parent_dir }}/openvpn_files/client.key
+key=/etc/openvpn/client.key
 comp-lzo=yes
-cert=/etc/ansible/openvpn_files/client.crt
+cert=/etc/openvpn/client.crt
 remote=104.236.140.196
 connection-type=tls
-ca=/etc/ansible/openvpn_files/ca.crt
+ca=/etc/openvpn/ca.crt
 cert-pass-flags=0
 
 [ipv6]
