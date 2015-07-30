@@ -1,5 +1,5 @@
 ---
-- name: configure vpn client
+- name: create vpn server
   hosts: digitalocean_vpn_client
   roles:
     - { role: digitalocean-vpn/create-droplet, tags: vpn }
@@ -9,3 +9,15 @@
   roles:
     - { role: digitalocean-vpn/server, tags: vpn}
     - { role: zufallsheld.ssh-hardening, tags: ssh-hardening }
+
+- name: configure vpn client
+  vars_prompt:
+    - name: "ansible_sudo_pass"
+      prompt: "Sudo password"
+      private: yes
+  hosts: digitalocean_vpn_client
+  roles:
+    - { role: digitalocean-vpn/client, tags: vpn }
+  # sudo required for writing NetworkManager connection files,
+  # which must be 600 root.
+  sudo: yes
