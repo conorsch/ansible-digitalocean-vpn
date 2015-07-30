@@ -1,0 +1,10 @@
+---
+- name: check current vpn status
+  command: nmcli --terse --fields vpn con status
+  register: vpn_status
+  changed_when: false
+
+- debug: ensure vpn connection is activated
+  notify: activate vpn connection
+  changed_when: vpn_status.stdout == "no"
+
