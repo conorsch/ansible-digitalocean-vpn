@@ -1,4 +1,4 @@
 *~
 *.swp
-files/static.key
 ansible-digital_ocean.cache
+openvpn_files/*
