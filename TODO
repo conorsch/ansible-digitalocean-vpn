@@ -4,8 +4,7 @@
 ** support multiple clients, e.g. laptop and phone
 
 * client setup
-** add files to sane default location, e.g. /etc/openvpn
-** try to use `synchronize` module for syncing hosts
 ** ensure client packages are installed, if necessary
-** create network manager connection
-** activate network manager connection
+** make NetworkManager optional
+  *** generate .ovpn files, still useful on phones
+
