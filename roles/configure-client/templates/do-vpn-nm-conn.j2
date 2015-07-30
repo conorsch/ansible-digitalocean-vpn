@@ -11,7 +11,7 @@ key={{ digitalocean_vpn_client_cert_dir }}/client.key
 cert={{ digitalocean_vpn_client_cert_dir }}/client.crt
 
 comp-lzo=yes
-remote=104.236.140.196
+remote={{ vpn_droplet.droplet.ip_address }}
 connection-type=tls
 cert-pass-flags=0
 

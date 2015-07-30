@@ -1,7 +1,7 @@
 {{ digitalocean_vpn_client_name }}
 dev tun
 proto udp
-remote {{ vpn_droplet.ip_address }} 1194
+remote {{ vpn_droplet.droplet.ip_address }} 1194
 remote-cert-tls server
 ns-cert-type server
 
