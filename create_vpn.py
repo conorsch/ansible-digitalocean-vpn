@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from ansible.playbook import PlayBook
 from ansible.inventory import Inventory
 from ansible import callbacks
@@ -17,7 +19,7 @@ runner_cb = callbacks.PlaybookRunnerCallbacks(stats, verbose=utils.VERBOSITY)
 # We fake a inventory file and let Ansible load if it's a real file.
 # Just don't tell Ansible that, so we don't hurt its feelings.
 inventory = """
-[vpn_client]
+[digitalocean_vpn_client]
 localhost ansible_connection=local
 
 [vpn_client:vars]
