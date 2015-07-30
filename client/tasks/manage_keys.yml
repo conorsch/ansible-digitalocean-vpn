@@ -16,3 +16,6 @@
     - client.key
     - ca.crt
 
+- debug: activate vpn connection
+  notify: activate vpn connection
+  changed_when: true
