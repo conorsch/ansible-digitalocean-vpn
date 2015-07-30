@@ -4,5 +4,5 @@
 - include: easy_rsa.yml
 - include: ufw.yml
 - include: vpn.yml
-- include: client_config.yml
+- include: fetch_keys.yml
 
