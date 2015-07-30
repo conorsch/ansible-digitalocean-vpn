@@ -1,8 +1,0 @@
----
-- hosts: vpn
-  vars:
-    vpn_sleep_time: 300
-
-  tasks:
-  - include: tasks/tugboat.yml
-  - include: tasks/vpn_teardown.yml

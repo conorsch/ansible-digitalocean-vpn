@@ -39,12 +39,15 @@ hosts.close()
 
 pb = PlayBook(
     playbook='digitalocean-vpn.yml',
-    host_list=hosts.name,     # Our hosts, the rendered inventory file
-    remote_user='some_user',
+    host_list=hosts.name,
     callbacks=playbook_cb,
     runner_callbacks=runner_cb,
     stats=stats,
 )
+
+print("""You will need to enter your sudo password on the current machine,
+the VPN client. Elevated privileges are necessary for writing to
+NetworkManager system connections and installing dependencies.""")
 
 results = pb.run()
 
