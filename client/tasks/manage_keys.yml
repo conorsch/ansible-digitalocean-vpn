@@ -1,0 +1,18 @@
+---
+- name: ensure openvpn key directory exists
+  file:
+    path: /etc/openvpn/
+    state: directory
+    mode: "0755"
+    owner: root
+    group: root
+
+- name: copy key files to openvpn directory
+  copy:
+    src: openvpn_files/client.{{item}}
+    dest: /etc/openvpn/
+  with_items:
+    - client.crt
+    - client.key
+    - ca.crt
+

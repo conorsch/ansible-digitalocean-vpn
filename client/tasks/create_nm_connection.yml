@@ -1,0 +1,8 @@
+---
+- name: deploy networkmanager vpn config file
+  template:
+    src: do-vpn-nm-conn.j2
+    dest: /etc/NetworkManager/system-connections/do-vpn
+    mode: "0600"
+    owner: root
+    group: root
