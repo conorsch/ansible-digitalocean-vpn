@@ -1,114 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 
-'''
-DigitalOcean external inventory script
-======================================
-
-Generates Ansible inventory of DigitalOcean Droplets.
-
-In addition to the --list and --host options used by Ansible, there are options
-for generating JSON of other DigitalOcean data.  This is useful when creating
-droplets.  For example, --regions will return all the DigitalOcean Regions.
-This information can also be easily found in the cache file, whose default
-location is /tmp/ansible-digital_ocean.cache).
-
-The --pretty (-p) option pretty-prints the output for better human readability.
-
-----
-Although the cache stores all the information received from DigitalOcean,
-the cache is not used for current droplet information (in --list, --host,
---all, and --droplets).  This is so that accurate droplet information is always
-found.  You can force this script to use the cache with --force-cache.
-
-----
-Configuration is read from `digital_ocean.ini`, then from environment variables,
-then and command-line arguments.
-
-Most notably, the DigitalOcean Client ID and API Key must be specified.  They
-can be specified in the INI file or with the following environment variables:
-    export DO_CLIENT_ID='DO123' DO_API_KEY='abc123'
-
-Alternatively, they can be passed on the command-line with --client-id and
---api-key.
-
-If you specify DigitalOcean credentials in the INI file, a handy way to
-get them into your environment (e.g., to use the digital_ocean module)
-is to use the output of the --env option with export:
-    export $(digital_ocean.py --env)
-
-----
-The following groups are generated from --list:
- - ID    (droplet ID)
- - NAME  (droplet NAME)
- - image_ID
- - image_NAME
- - distro_NAME  (distribution NAME from image)
- - region_ID
- - region_NAME
- - size_ID
- - size_NAME
- - status_STATUS
-
-When run against a specific host, this script returns the following variables:
- - do_created_at
- - do_distroy
- - do_id
- - do_image
- - do_image_id
- - do_ip_address
- - do_name
- - do_region
- - do_region_id
- - do_size
- - do_size_id
- - do_status
-
------
-```
-usage: digital_ocean.py [-h] [--list] [--host HOST] [--all]
-                                 [--droplets] [--regions] [--images] [--sizes]
-                                 [--ssh-keys] [--domains] [--pretty]
-                                 [--cache-path CACHE_PATH]
-                                 [--cache-max_age CACHE_MAX_AGE]
-                                 [--refresh-cache] [--client-id CLIENT_ID]
-                                 [--api-key API_KEY]
-
-Produce an Ansible Inventory file based on DigitalOcean credentials
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --list                List all active Droplets as Ansible inventory
-                        (default: True)
-  --host HOST           Get all Ansible inventory variables about a specific
-                        Droplet
-  --all                 List all DigitalOcean information as JSON
-  --droplets            List Droplets as JSON
-  --regions             List Regions as JSON
-  --images              List Images as JSON
-  --sizes               List Sizes as JSON
-  --ssh-keys            List SSH keys as JSON
-  --domains             List Domains as JSON
-  --pretty, -p          Pretty-print results
-  --cache-path CACHE_PATH
-                        Path to the cache files (default: .)
-  --cache-max_age CACHE_MAX_AGE
-                        Maximum age of the cached items (default: 0)
-  --refresh-cache       Force refresh of cache by making API requests to
-                        DigitalOcean (default: False - use cache files)
-  --client-id CLIENT_ID, -c CLIENT_ID
-                        DigitalOcean Client ID
-  --api-key API_KEY, -a API_KEY
-                        DigitalOcean API Key
-```
-
-'''
-
-# (c) 2013, Evan Wies <evan@neomantra.net>
-#
-# Inspired by the EC2 inventory plugin:
-# https://github.com/ansible/ansible/blob/devel/plugins/inventory/ec2.py
-#
-# This file is part of Ansible,
+# This file is part of Ansible
 #
 # Ansible is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -122,366 +15,426 @@ optional arguments:
 #
 # You should have received a copy of the GNU General Public License
 # along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
+DOCUMENTATION = '''
+---
+module: digital_ocean
+short_description: Create/delete a droplet/SSH_key in DigitalOcean
+description:
+     - Create/delete a droplet in DigitalOcean and optionally wait for it to be 'running', or deploy an SSH key.
+version_added: "1.3"
+author: "Vincent Viallet (@zbal)"
+options:
+  command:
+    description:
+     - Which target you want to operate on.
+    default: droplet
+    choices: ['droplet', 'ssh']
+  state:
+    description:
+     - Indicate desired state of the target.
+    default: present
+    choices: ['present', 'active', 'absent', 'deleted']
+  api_token:
+    description:
+     - DigitalOcean api token.
+  id:
+    description:
+     - Numeric, the droplet id you want to operate on.
+  name:
+    description:
+     - String, this is the name of the droplet - must be formatted by hostname rules, or the name of a SSH key.
+  unique_name:
+    description:
+     - Bool, require unique hostnames.  By default, DigitalOcean allows multiple hosts with the same name.  Setting this to "yes" allows only one host per name.  Useful for idempotence.
+    version_added: "1.4"
+    default: "no"
+    choices: [ "yes", "no" ]
+  size_id:
+    description:
+     - This is the slug of the size you would like the droplet created with.
+  image_id:
+    description:
+     - This is the slug of the image you would like the droplet created with.
+  region_id:
+    description:
+     - This is the slug of the region you would like your server to be created in.
+  ssh_key_ids:
+    description:
+     - Optional, array of of SSH key (numeric) ID that you would like to be added to the server.
+  virtio:
+    description:
+     - "Bool, turn on virtio driver in droplet for improved network and storage I/O."
+    version_added: "1.4"
+    default: "yes"
+    choices: [ "yes", "no" ]
+  private_networking:
+    description:
+     - "Bool, add an additional, private network interface to droplet for inter-droplet communication."
+    version_added: "1.4"
+    default: "no"
+    choices: [ "yes", "no" ]
+  backups_enabled:
+    description:
+     - Optional, Boolean, enables backups for your droplet.
+    version_added: "1.6"
+    default: "no"
+    choices: [ "yes", "no" ]
+  user_data:
+    description:
+      - opaque blob of data which is made available to the droplet
+    version_added: "1.10"
+    required: false
+    default: None
+  wait:
+    description:
+     - Wait for the droplet to be in state 'running' before returning.  If wait is "no" an ip_address may not be returned.
+    default: "yes"
+    choices: [ "yes", "no" ]
+  wait_timeout:
+    description:
+     - How long before wait gives up, in seconds.
+    default: 300
+  ssh_pub_key:
+    description:
+     - The public SSH key you want to add to your account.
 
-######################################################################
+notes:
+  - Two environment variables can be used, DO_API_KEY and DO_API_TOKEN. They both refer to the v2 token.
+  - As of Ansible 2.0, Version 2 of the DigitalOcean API is used.
+  - As of Ansible 2.0, the above parameters were changed significantly. If you are running 1.9.x or earlier, please use C(ansible-doc digital_ocean) to view the correct parameters for your version. Dedicated web docs will be available in the near future for the stable branch.
+requirements:
+  - "python >= 2.6"
+  - dopy
+'''
+
+
+EXAMPLES = '''
+# Ensure a SSH key is present
+# If a key matches this name, will return the ssh key id and changed = False
+# If no existing key matches this name, a new key is created, the ssh key id is returned and changed = False
+
+- digital_ocean: >
+      state=present
+      command=ssh
+      name=my_ssh_key
+      ssh_pub_key='ssh-rsa AAAA...'
+      api_token=XXX
+
+# Create a new Droplet
+# Will return the droplet details including the droplet id (used for idempotence)
+
+- digital_ocean: >
+      state=present
+      command=droplet
+      name=mydroplet
+      api_token=XXX
+      size_id=2gb
+      region_id=ams2
+      image_id=fedora-19-x64
+      wait_timeout=500
+  register: my_droplet
+- debug: msg="ID is {{ my_droplet.droplet.id }}"
+- debug: msg="IP is {{ my_droplet.droplet.ip_address }}"
+
+# Ensure a droplet is present
+# If droplet id already exist, will return the droplet details and changed = False
+# If no droplet matches the id, a new droplet will be created and the droplet details (including the new id) are returned, changed = True.
+
+- digital_ocean: >
+      state=present
+      command=droplet
+      id=123
+      name=mydroplet
+      api_token=XXX
+      size_id=2gb
+      region_id=ams2
+      image_id=fedora-19-x64
+      wait_timeout=500
+
+# Create a droplet with ssh key
+# The ssh key id can be passed as argument at the creation of a droplet (see ssh_key_ids).
+# Several keys can be added to ssh_key_ids as id1,id2,id3
+# The keys are used to connect as root to the droplet.
+
+- digital_ocean: >
+      state=present
+      ssh_key_ids=123,456
+      name=mydroplet
+      api_token=XXX
+      size_id=2gb
+      region_id=ams2
+      image_id=fedora-19-x64
+'''
 
 import os
-import sys
-import re
-import argparse
-from time import time
-import ConfigParser
+import time
+from distutils.version import LooseVersion
 
+HAS_DOPY = True
 try:
-    import json
-except ImportError:
-    import simplejson as json
-
-try:
+    import dopy
     from dopy.manager import DoError, DoManager
-except ImportError, e:
-    print "failed=True msg='`dopy` library required for this script'"
-    sys.exit(1)
+    if LooseVersion(dopy.__version__) < LooseVersion('0.3.2'):
+        HAS_DOPY = False
+except ImportError:
+    HAS_DOPY = False
 
+class TimeoutError(DoError):
+    def __init__(self, msg, id):
+        super(TimeoutError, self).__init__(msg)
+        self.id = id
 
+class JsonfyMixIn(object):
+    def to_json(self):
+        return self.__dict__
 
-class DigitalOceanInventory(object):
+class Droplet(JsonfyMixIn):
+    manager = None
 
-    ###########################################################################
-    # Main execution path
-    ###########################################################################
+    def __init__(self, droplet_json):
+        self.status = 'new'
+        self.__dict__.update(droplet_json)
 
-    def __init__(self):
-        ''' Main execution path '''
+    def is_powered_on(self):
+        return self.status == 'active'
 
-        # DigitalOceanInventory data
-        self.data = {}      # All DigitalOcean data
-        self.inventory = {} # Ansible Inventory
-        self.index = {}     # Various indices of Droplet metadata
-
-        # Define defaults
-        self.cache_path = '.'
-        self.cache_max_age = 0
-
-        # Read settings, environment variables, and CLI arguments
-        self.read_settings()
-        self.read_environment()
-        self.read_cli_args()
-
-        # Verify credentials were set
-        if not hasattr(self, 'client_id') or not hasattr(self, 'api_key'):
-            print '''Could not find values for DigitalOcean client_id and api_key.
-They must be specified via either ini file, command line argument (--client-id and --api-key),
-or environment variables (DO_CLIENT_ID and DO_API_KEY)'''
-            sys.exit(-1)
-
-        # env command, show DigitalOcean credentials
-        if self.args.env:
-            print "DO_CLIENT_ID=%s DO_API_KEY=%s" % (self.client_id, self.api_key)
-            sys.exit(0)
-
-        # Manage cache
-        self.cache_filename = self.cache_path + "/ansible-digital_ocean.cache"
-        self.cache_refreshed = False
-
-        if not self.args.force_cache and self.args.refresh_cache or not self.is_cache_valid():
-            self.load_all_data_from_digital_ocean()
+    def update_attr(self, attrs=None):
+        if attrs:
+            for k, v in attrs.iteritems():
+                setattr(self, k, v)
         else:
-            self.load_from_cache()
-            if len(self.data) == 0:
-                if self.args.force_cache:
-                    print '''Cache is empty and --force-cache was specified'''
-                    sys.exit(-1)
-                self.load_all_data_from_digital_ocean()
-            else:
-                # We always get fresh droplets for --list, --host, --all, and --droplets
-                # unless --force-cache is specified
-                if not self.args.force_cache and (
-                   self.args.list or self.args.host or self.args.all or self.args.droplets):
-                    self.load_droplets_from_digital_ocean()
+            json = self.manager.show_droplet(self.id)
+            if json['ip_address']:
+                self.update_attr(json)
 
-        # Pick the json_data to print based on the CLI command
-        if self.args.droplets:   json_data = { 'droplets': self.data['droplets'] }
-        elif self.args.regions:  json_data = { 'regions':  self.data['regions'] }
-        elif self.args.images:   json_data = { 'images':   self.data['images'] }
-        elif self.args.sizes:    json_data = { 'sizes':    self.data['sizes'] }
-        elif self.args.ssh_keys: json_data = { 'ssh_keys': self.data['ssh_keys'] }
-        elif self.args.domains:  json_data = { 'domains':  self.data['domains'] }
-        elif self.args.all:      json_data = self.data
+    def power_on(self):
+        assert self.status == 'off', 'Can only power on a closed one.'
+        json = self.manager.power_on_droplet(self.id)
+        self.update_attr(json)
 
-        elif self.args.host:     json_data = self.load_droplet_variables_for_host()
-        else:    # '--list' this is last to make it default
-                                 json_data = self.inventory
+    def ensure_powered_on(self, wait=True, wait_timeout=300):
+        if self.is_powered_on():
+            return
+        if self.status == 'off':  # powered off
+            self.power_on()
 
-        if self.args.pretty:
-            print json.dumps(json_data, sort_keys=True, indent=2)
-        else:
-            print json.dumps(json_data)
-        # That's all she wrote...
+        if wait:
+            end_time = time.time() + wait_timeout
+            while time.time() < end_time:
+                time.sleep(min(20, end_time - time.time()))
+                self.update_attr()
+                if self.is_powered_on():
+                    if not self.ip_address:
+                        raise TimeoutError('No ip is found.', self.id)
+                    return
+            raise TimeoutError('Wait for droplet running timeout', self.id)
 
+    def destroy(self):
+        return self.manager.destroy_droplet(self.id, scrub_data=True)
 
-    ###########################################################################
-    # Script configuration
-    ###########################################################################
+    @classmethod
+    def setup(cls, api_token):
+        cls.manager = DoManager(None, api_token, api_version=2)
 
-    def read_settings(self):
-        ''' Reads the settings from the digital_ocean.ini file '''
-        config = ConfigParser.SafeConfigParser()
-        config.read(os.path.dirname(os.path.realpath(__file__)) + '/digital_ocean.ini')
+    @classmethod
+    def add(cls, name, size_id, image_id, region_id, ssh_key_ids=None, virtio=True, private_networking=False, backups_enabled=False, user_data=None):
+        private_networking_lower = str(private_networking).lower()
+        backups_enabled_lower = str(backups_enabled).lower()
+        json = cls.manager.new_droplet(name, size_id, image_id, region_id, ssh_key_ids, virtio, private_networking_lower, backups_enabled_lower,user_data)
+        droplet = cls(json)
+        return droplet
 
-        # Credentials
-        if config.has_option('digital_ocean', 'client_id'):
-            self.client_id = config.get('digital_ocean', 'client_id')
-        if config.has_option('digital_ocean', 'api_key'):
-            self.api_key = config.get('digital_ocean', 'api_key')
+    @classmethod
+    def find(cls, id=None, name=None):
+        if not id and not name:
+            return False
 
-        # Cache related
-        if config.has_option('digital_ocean', 'cache_path'):
-            self.cache_path = config.get('digital_ocean', 'cache_path')
-        if config.has_option('digital_ocean', 'cache_max_age'):
-            self.cache_max_age = config.getint('digital_ocean', 'cache_max_age')
+        droplets = cls.list_all()
 
+        # Check first by id.  digital ocean requires that it be unique
+        for droplet in droplets:
+            if droplet.id == id:
+                return droplet
 
-    def read_environment(self):
-        ''' Reads the settings from environment variables '''
-        # Setup credentials
-        if os.getenv("DO_CLIENT_ID"): self.client_id = os.getenv("DO_CLIENT_ID")
-        if os.getenv("DO_API_KEY"):   self.api_key = os.getenv("DO_API_KEY")
+        # Failing that, check by hostname.
+        for droplet in droplets:
+            if droplet.name == name:
+                return droplet
 
-
-    def read_cli_args(self):
-        ''' Command line argument processing '''
-        parser = argparse.ArgumentParser(description='Produce an Ansible Inventory file based on DigitalOcean credentials')
-
-        parser.add_argument('--list', action='store_true', help='List all active Droplets as Ansible inventory (default: True)')
-        parser.add_argument('--host', action='store', help='Get all Ansible inventory variables about a specific Droplet')
-
-        parser.add_argument('--all', action='store_true', help='List all DigitalOcean information as JSON')
-        parser.add_argument('--droplets','-d', action='store_true', help='List Droplets as JSON')
-        parser.add_argument('--regions', action='store_true', help='List Regions as JSON')
-        parser.add_argument('--images', action='store_true', help='List Images as JSON')
-        parser.add_argument('--sizes', action='store_true', help='List Sizes as JSON')
-        parser.add_argument('--ssh-keys', action='store_true', help='List SSH keys as JSON')
-        parser.add_argument('--domains', action='store_true',help='List Domains as JSON')
-
-        parser.add_argument('--pretty','-p', action='store_true', help='Pretty-print results')
-
-        parser.add_argument('--cache-path', action='store', help='Path to the cache files (default: .)')
-        parser.add_argument('--cache-max_age', action='store', help='Maximum age of the cached items (default: 0)')
-        parser.add_argument('--force-cache', action='store_true', default=False, help='Only use data from the cache')
-        parser.add_argument('--refresh-cache','-r', action='store_true', default=False, help='Force refresh of cache by making API requests to DigitalOcean (default: False - use cache files)')
-
-        parser.add_argument('--env','-e', action='store_true', help='Display DO_CLIENT_ID and DO_API_KEY')
-        parser.add_argument('--client-id','-c', action='store', help='DigitalOcean Client ID')
-        parser.add_argument('--api-key','-a', action='store', help='DigitalOcean API Key')
-
-        self.args = parser.parse_args()
-
-        if self.args.client_id: self.client_id = self.args.client_id
-        if self.args.api_key: self.api_key = self.args.api_key
-        if self.args.cache_path: self.cache_path = self.args.cache_path
-        if self.args.cache_max_age: self.cache_max_age = self.args.cache_max_age
-
-        # Make --list default if none of the other commands are specified
-        if (not self.args.droplets and not self.args.regions and not self.args.images and
-            not self.args.sizes and not self.args.ssh_keys and not self.args.domains and
-            not self.args.all and not self.args.host):
-                self.args.list = True
-
-
-    ###########################################################################
-    # Data Management
-    ###########################################################################
-
-    def load_all_data_from_digital_ocean(self):
-        ''' Use dopy to get all the information from DigitalOcean and save data in cache files '''
-        manager  = DoManager(self.client_id, self.api_key)
-
-        self.data = {}
-        self.data['droplets'] = self.sanitize_list(manager.all_active_droplets())
-        self.data['regions']  = self.sanitize_list(manager.all_regions())
-        self.data['images']   = self.sanitize_list(manager.all_images(filter=None))
-        self.data['sizes']    = self.sanitize_list(manager.sizes())
-        self.data['ssh_keys'] = self.sanitize_list(manager.all_ssh_keys())
-        self.data['domains']  = self.sanitize_list(manager.all_domains())
-
-        self.index = {}
-        self.index['region_to_name']  = self.build_index(self.data['regions'], 'id', 'name')
-        self.index['size_to_name']    = self.build_index(self.data['sizes'], 'id', 'name')
-        self.index['image_to_name']   = self.build_index(self.data['images'], 'id', 'name')
-        self.index['image_to_distro'] = self.build_index(self.data['images'], 'id', 'distribution')
-        self.index['host_to_droplet'] = self.build_index(self.data['droplets'], 'ip_address', 'id', False)
-
-        self.build_inventory()
-
-        self.write_to_cache()
-
-
-    def load_droplets_from_digital_ocean(self):
-        ''' Use dopy to get droplet information from DigitalOcean and save data in cache files '''
-        manager  = DoManager(self.client_id, self.api_key)
-        self.data['droplets'] = self.sanitize_list(manager.all_active_droplets())
-        self.index['host_to_droplet'] = self.build_index(self.data['droplets'], 'ip_address', 'id', False)
-        self.build_inventory()
-        self.write_to_cache()
-
-
-    def build_index(self, source_seq, key_from, key_to, use_slug=True):
-        dest_dict = {}
-        for item in source_seq:
-            name = (use_slug and item.has_key('slug')) and item['slug'] or item[key_to]
-            key = item[key_from]
-            dest_dict[key] = name
-        return dest_dict
-
-
-    def build_inventory(self):
-        '''Build Ansible inventory of droplets'''
-        self.inventory = {}
-
-        # add all droplets by id and name
-        for droplet in self.data['droplets']:
-            dest = droplet['ip_address']
-
-            self.inventory[droplet['id']] = [dest]
-            self.push(self.inventory, droplet['name'], dest)
-            self.push(self.inventory, 'region_'+droplet['region_id'], dest)
-            self.push(self.inventory, 'image_' +droplet['image_id'], dest)
-            self.push(self.inventory, 'size_'  +droplet['size_id'], dest)
-            self.push(self.inventory, 'status_'+droplet['status'], dest)
-
-            region_name = self.index['region_to_name'].get(droplet['region_id'])
-            if region_name:
-                self.push(self.inventory, 'region_'+region_name, dest)
-
-            size_name = self.index['size_to_name'].get(droplet['size_id'])
-            if size_name:
-                self.push(self.inventory, 'size_'+size_name, dest)
-
-            image_name = self.index['image_to_name'].get(droplet['image_id'])
-            if image_name:
-                self.push(self.inventory, 'image_'+image_name, dest)
-
-            distro_name = self.index['image_to_distro'].get(droplet['image_id'])
-            if distro_name:
-                self.push(self.inventory, 'distro_'+distro_name, dest)
-
-
-    def load_droplet_variables_for_host(self):
-        '''Generate a JSON response to a --host call'''
-        host = self.to_safe(str(self.args.host))
-
-        if not host in self.index['host_to_droplet']:
-            # try updating cache
-            if not self.args.force_cache:
-                self.load_all_data_from_digital_ocean()
-            if not host in self.index['host_to_droplet']:
-                # host might not exist anymore
-                return {}
-
-        droplet = None
-        if self.cache_refreshed:
-            for drop in self.data['droplets']:
-                if drop['ip_address'] == host:
-                    droplet = self.sanitize_dict(drop)
-                    break
-        else:
-            # Cache wasn't refreshed this run, so hit DigitalOcean API
-            manager = DoManager(self.client_id, self.api_key)
-            droplet_id = self.index['host_to_droplet'][host]
-            droplet = self.sanitize_dict(manager.show_droplet(droplet_id))
-       
-        if not droplet:
-            return {}
-
-        # Put all the information in a 'do_' namespace
-        info = {}
-        for k, v in droplet.items():
-            info['do_'+k] = v
-
-        # Generate user-friendly variables (i.e. not the ID's) 
-        if droplet.has_key('region_id'):
-            info['do_region'] = self.index['region_to_name'].get(droplet['region_id'])
-        if droplet.has_key('size_id'):
-            info['do_size'] = self.index['size_to_name'].get(droplet['size_id'])
-        if droplet.has_key('image_id'):
-            info['do_image']  = self.index['image_to_name'].get(droplet['image_id'])
-            info['do_distro'] = self.index['image_to_distro'].get(droplet['image_id'])
-
-        return info
-
-
-
-    ###########################################################################
-    # Cache Management
-    ###########################################################################
-
-    def is_cache_valid(self):
-        ''' Determines if the cache files have expired, or if it is still valid '''
-        if os.path.isfile(self.cache_filename):
-            mod_time = os.path.getmtime(self.cache_filename)
-            current_time = time()
-            if (mod_time + self.cache_max_age) > current_time:
-                return True
         return False
 
+    @classmethod
+    def list_all(cls):
+        json = cls.manager.all_active_droplets()
+        return map(cls, json)
 
-    def load_from_cache(self):
-        ''' Reads the data from the cache file and assigns it to member variables as Python Objects'''
-        cache = open(self.cache_filename, 'r')
-        json_data = cache.read()
-        cache.close()
-        data = json.loads(json_data)
+class SSH(JsonfyMixIn):
+    manager = None
 
-        self.data = data['data']
-        self.inventory = data['inventory']
-        self.index = data['index']
+    def __init__(self, ssh_key_json):
+        self.__dict__.update(ssh_key_json)
+    update_attr = __init__
+
+    def destroy(self):
+        self.manager.destroy_ssh_key(self.id)
+        return True
+
+    @classmethod
+    def setup(cls, api_token):
+        cls.manager = DoManager(None, api_token, api_version=2)
+
+    @classmethod
+    def find(cls, name):
+        if not name:
+            return False
+        keys = cls.list_all()
+        for key in keys:
+            if key.name == name:
+                return key
+        return False
+
+    @classmethod
+    def list_all(cls):
+        json = cls.manager.all_ssh_keys()
+        return map(cls, json)
+
+    @classmethod
+    def add(cls, name, key_pub):
+        json = cls.manager.new_ssh_key(name, key_pub)
+        return cls(json)
+
+def core(module):
+    def getkeyordie(k):
+        v = module.params[k]
+        if v is None:
+            module.fail_json(msg='Unable to load %s' % k)
+        return v
+
+    try:
+        api_token = module.params['api_token'] or os.environ['DO_API_TOKEN'] or os.environ['DO_API_KEY']
+    except KeyError, e:
+        module.fail_json(msg='Unable to load %s' % e.message)
+
+    changed = True
+    command = module.params['command']
+    state = module.params['state']
+
+    if command == 'droplet':
+        Droplet.setup(api_token)
+        if state in ('active', 'present'):
+
+            # First, try to find a droplet by id.
+            droplet = Droplet.find(id=module.params['id'])
+
+            # If we couldn't find the droplet and the user is allowing unique
+            # hostnames, then check to see if a droplet with the specified
+            # hostname already exists.
+            if not droplet and module.params['unique_name']:
+                droplet = Droplet.find(name=getkeyordie('name'))
+
+            # If both of those attempts failed, then create a new droplet.
+            if not droplet:
+                droplet = Droplet.add(
+                    name=getkeyordie('name'),
+                    size_id=getkeyordie('size_id'),
+                    image_id=getkeyordie('image_id'),
+                    region_id=getkeyordie('region_id'),
+                    ssh_key_ids=module.params['ssh_key_ids'],
+                    virtio=module.params['virtio'],
+                    private_networking=module.params['private_networking'],
+                    backups_enabled=module.params['backups_enabled'],
+                    user_data=module.params.get('user_data'),
+                )
+
+            if droplet.is_powered_on():
+                changed = False
+
+            droplet.ensure_powered_on(
+                wait=getkeyordie('wait'),
+                wait_timeout=getkeyordie('wait_timeout')
+            )
+
+            module.exit_json(changed=changed, droplet=droplet.to_json())
+
+        elif state in ('absent', 'deleted'):
+            # First, try to find a droplet by id.
+            droplet = Droplet.find(module.params['id'])
+
+            # If we couldn't find the droplet and the user is allowing unique
+            # hostnames, then check to see if a droplet with the specified
+            # hostname already exists.
+            if not droplet and module.params['unique_name']:
+                droplet = Droplet.find(name=getkeyordie('name'))
+
+            if not droplet:
+                module.exit_json(changed=False, msg='The droplet is not found.')
+
+            event_json = droplet.destroy()
+            module.exit_json(changed=True)
+
+    elif command == 'ssh':
+        SSH.setup(api_token)
+        name = getkeyordie('name')
+        if state in ('active', 'present'):
+            key = SSH.find(name)
+            if key:
+                module.exit_json(changed=False, ssh_key=key.to_json())
+            key = SSH.add(name, getkeyordie('ssh_pub_key'))
+            module.exit_json(changed=True, ssh_key=key.to_json())
+
+        elif state in ('absent', 'deleted'):
+            key = SSH.find(name)
+            if not key:
+                module.exit_json(changed=False, msg='SSH key with the name of %s is not found.' % name)
+            key.destroy()
+            module.exit_json(changed=True)
 
 
-    def write_to_cache(self):
-        ''' Writes data in JSON format to a file '''
-        data = { 'data': self.data, 'index': self.index, 'inventory': self.inventory }
-        json_data = json.dumps(data, sort_keys=True, indent=2)
+def main():
+    module = AnsibleModule(
+        argument_spec = dict(
+            command = dict(choices=['droplet', 'ssh'], default='droplet'),
+            state = dict(choices=['active', 'present', 'absent', 'deleted'], default='present'),
+            api_token = dict(aliases=['API_TOKEN'], no_log=True),
+            name = dict(type='str'),
+            size_id = dict(),
+            image_id = dict(),
+            region_id = dict(),
+            ssh_key_ids = dict(type='list'),
+            virtio = dict(type='bool', default='yes'),
+            private_networking = dict(type='bool', default='no'),
+            backups_enabled = dict(type='bool', default='no'),
+            id = dict(aliases=['droplet_id'], type='int'),
+            unique_name = dict(type='bool', default='no'),
+            user_data = dict(default=None),
+            wait = dict(type='bool', default=True),
+            wait_timeout = dict(default=300, type='int'),
+            ssh_pub_key = dict(type='str'),
+        ),
+        required_together = (
+            ['size_id', 'image_id', 'region_id'],
+        ),
+        mutually_exclusive = (
+            ['size_id', 'ssh_pub_key'],
+            ['image_id', 'ssh_pub_key'],
+            ['region_id', 'ssh_pub_key'],
+        ),
+        required_one_of = (
+            ['id', 'name'],
+        ),
+    )
+    if not HAS_DOPY:
+        module.fail_json(msg='dopy >= 0.3.2 required for this module')
 
-        cache = open(self.cache_filename, 'w')
-        cache.write(json_data)
-        cache.close()
+    try:
+        core(module)
+    except TimeoutError, e:
+        module.fail_json(msg=str(e), id=e.id)
+    except (DoError, Exception), e:
+        module.fail_json(msg=str(e))
 
+# import module snippets
+from ansible.module_utils.basic import *
 
-
-    ###########################################################################
-    # Utilities
-    ###########################################################################
-
-    def push(self, my_dict, key, element):
-        ''' Pushed an element onto an array that may not have been defined in the dict '''
-        if key in my_dict:
-            my_dict[key].append(element);
-        else:
-            my_dict[key] = [element]
-
-
-    def to_safe(self, word):
-        ''' Converts 'bad' characters in a string to underscores so they can be used as Ansible groups '''
-        return re.sub("[^A-Za-z0-9\-\.]", "_", word)
-
-
-    def sanitize_dict(self, d):
-        new_dict = {}
-        for k, v in d.items():
-            if v != None:
-                new_dict[self.to_safe(str(k))] = self.to_safe(str(v))
-        return new_dict
-
-
-    def sanitize_list(self, seq):
-        new_seq = []
-        for d in seq:
-            new_seq.append(self.sanitize_dict(d))
-        return new_seq
-
-
-
-###########################################################################
-# Run the script
-DigitalOceanInventory()
+if __name__ == '__main__':
+    main()
