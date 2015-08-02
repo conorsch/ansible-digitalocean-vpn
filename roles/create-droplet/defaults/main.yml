@@ -4,7 +4,7 @@
 # do_client_id: ansible_env.VAR # YOUR_CLIENT_ID_HERE
 #
 # You'll need to export the following environment variables
-do_api_key: "{{ansible_env.DO_API_KEY}}"
+do_api_token: "{{ansible_env.DO_API_TOKEN}}"
 do_client_id: "{{ansible_env.DO_CLIENT_ID}}"
 do_ssh_key_id: "{{ansible_env.DO_SSH_KEY_ID}}"
 do_ssh_key_file: "{{ansible_env.DO_SSH_KEY_FILE}}"
