@@ -7,9 +7,4 @@
 ** ensure client packages are installed, if necessary
 ** make NetworkManager optional
   *** generate .ovpn files, still useful on phones
-  *** check if `nmcli` is installed
-  **** only run nmcli if installed
   **** only run sudo command if ansible_sudo_pass defined
-** do-config
-*** keyscan once only, after droplet creation
-*** autoadd client ssh keys if none
