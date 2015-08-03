@@ -8,7 +8,6 @@
   hosts: digitalocean_vpn_server
   roles:
     - { role: configure-server, tags: vpn }
-    - { role: zufallsheld.ssh-hardening, tags: ssh-hardening }
 
 - name: configure vpn client
 #  vars_prompt:
