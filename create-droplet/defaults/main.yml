@@ -10,7 +10,10 @@ do_ssh_key_file: "{{ansible_env.DO_SSH_KEY_FILE}}"
 
 
 # DigitalOcean instance parameters
-# region '3' is SFO1
-region_id: 3
-size_id: 66
-image_id: 11836690
+# As of v2 of Ansible module (bundled with this role),
+# you can use slug strings for API parameter values,
+# rather than integer IDs.
+region_id: "sfo1"
+size_id: "512mb"
+# Ubuntu 14.04 64-bit is 12790328
+image_id: 12790328
