@@ -8,6 +8,7 @@ from ansible import utils
 import jinja2
 from tempfile import NamedTemporaryFile
 import os
+import json
 
 # Boilerplace callbacks for stdout/stderr and log output
 utils.VERBOSITY = 0
@@ -22,13 +23,23 @@ inventory = """
 [digitalocean_vpn_client]
 localhost ansible_connection=local
 
-[vpn_client:vars]
-custom_var={{ foo }}
+[digitalocean_vpn_client:vars]
+ansible_sudo_pass={{ client_sudo_pass }}
 """
+
+from getpass import getpass
+prompt = """
+You will need to enter your sudo password on the current machine,
+the VPN client. Elevated privileges are necessary for writing to
+NetworkManager system connections and installing dependencies.
+
+sudo password for localhost: """
+
+sudo_passwd = getpass(prompt)
 
 inventory_template = jinja2.Template(inventory)
 rendered_inventory = inventory_template.render({
-    'foo': 'bar',
+    'client_sudo_pass': sudo_passwd,
     # and the rest of our variables
 })
 
@@ -45,16 +56,13 @@ pb = PlayBook(
     stats=stats,
 )
 
-print("""You will need to enter your sudo password on the current machine,
-the VPN client. Elevated privileges are necessary for writing to
-NetworkManager system connections and installing dependencies.""")
-
 results = pb.run()
 
 # Ensure on_stats callback is called
 # for callback modules
-playbook_cb.on_stats(pb.stats)
+#playbook_cb.on_stats(pb.stats)
 
+# Clean up temporary inventory file.
 os.remove(hosts.name)
 
-print results
+print(json.dumps(results))
