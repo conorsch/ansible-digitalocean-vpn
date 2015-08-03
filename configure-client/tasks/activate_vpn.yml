@@ -18,10 +18,10 @@
   command: nmcli --terse --fields vpn con status
   register: vpn_status
   changed_when: false
-  when: has_nmcli
+  when: has_nmcli and vpn_auto_configure
 
 - name: ensure vpn connection is activated
   command: nmcli con up id "{{ digitalocean_vpn_nm_connection_name }}"
   changed_when: vpn_status.stdout == "no"
-  when: has_nmcli and vpn_status.stdout == "no"
+  when: has_nmcli and vpn_auto_configure and vpn_status.stdout == "no"
 
