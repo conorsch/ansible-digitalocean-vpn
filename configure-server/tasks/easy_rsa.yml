@@ -42,6 +42,15 @@
     replace: \1"DNS:${KEY_CN}"
     backup: yes
 
+- name: clean cert dir on first run
+  shell: source ./vars && ./clean-all
+  args:
+    chdir: /etc/openvpn/easy-rsa
+    executable: /bin/bash
+    creates: /etc/openvpn/easy-rsa/keys/index.txt
+  tags:
+    - easyrsa
+
 - name: build certificate authority
   shell: source ./vars && ./pkitool --initca
   args:
