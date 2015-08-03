@@ -7,7 +7,7 @@
   digital_ocean:
     command: droplet
     state: present
-    name: vpn
+    name: "{{ vpn_droplet_name }}"
     unique_name: true
 
     size_id: "{{ size_id }}"

@@ -8,6 +8,8 @@ do_api_token: "{{ansible_env.DO_API_TOKEN}}"
 do_ssh_key_id: "{{ansible_env.DO_SSH_KEY_ID}}"
 do_ssh_key_file: "{{ansible_env.DO_SSH_KEY_FILE}}"
 
+# Provide default hostname for DigitalOcean VPN droplet.
+vpn_droplet_name: vpn
 
 # DigitalOcean instance parameters
 # As of v2 of Ansible module (bundled with this role),
