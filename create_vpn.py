@@ -16,9 +16,13 @@ playbook_cb = callbacks.PlaybookCallbacks(verbose=utils.VERBOSITY)
 stats = callbacks.AggregateStats()
 runner_cb = callbacks.PlaybookRunnerCallbacks(stats, verbose=utils.VERBOSITY)
 
-# Dynamic Inventory
-# We fake a inventory file and let Ansible load if it's a real file.
-# Just don't tell Ansible that, so we don't hurt its feelings.
+# Template for temporary inventory file.
+# Includes a hack to interpolate the sudo password
+# from the client. This script will always prompt
+# for the sudo password because trying to figure out
+# whether the VPN client has ansible_sudo_pass declared
+# elsewhere seems impossible. If you have it declared elsewher,
+# don't use this script, simply include the top-level playbook.
 inventory = """
 [digitalocean_vpn_client]
 localhost ansible_connection=local
@@ -48,6 +52,7 @@ hosts = NamedTemporaryFile(delete=False)
 hosts.write(rendered_inventory)
 hosts.close()
 
+# Configure playbook invocation.
 pb = PlayBook(
     playbook='digitalocean-vpn.yml',
     host_list=hosts.name,
