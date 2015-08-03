@@ -6,3 +6,4 @@
     mode: "0600"
     owner: root
     group: root
+  when: vpn_auto_configure
