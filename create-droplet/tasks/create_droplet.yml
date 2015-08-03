@@ -42,8 +42,8 @@
 
 - name: flush old IPs from SSH known_hosts
   shell: 'ssh-keygen -f "$HOME/.ssh/known_hosts" -R {{ vpn_droplet.droplet.ip_address }}'
-  changed_when: false
+  when: vpn_droplet.changed
 
 - name: add new IP to SSH known_hosts
   shell: 'ssh-keyscan -H -T 10 {{ vpn_droplet.droplet.ip_address }} >> "$HOME/.ssh/known_hosts"'
-  changed_when: false
+  when: vpn_droplet.changed
