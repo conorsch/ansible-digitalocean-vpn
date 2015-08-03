@@ -4,6 +4,7 @@
   register: nmcli_result
   # Don't bail out if the shell command returns a non-zero exit code.
   ignore_errors: true
+  changed_when: false
 
 - name: set host fact with nmcli status
   # Store presence of nmcli as boolean in hostvar,
