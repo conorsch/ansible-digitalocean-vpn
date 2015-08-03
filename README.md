@@ -11,8 +11,16 @@ the connection via NetworkManager.
 
 Usage:
 ```
-./create_vpn.py
+./create-vpn
+```
 
+If you already use Ansible to manage systems, then you don't
+need the `create-vpn` wrapper script, which handles creating
+dynamic inventories. Instead, just include the `digitalocean.yml`
+playbook, or run it directly:
+
+```
+ansible-playbook digitalocean.yml
 ```
 
 ## OpenVPN server
