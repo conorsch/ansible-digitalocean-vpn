@@ -12,3 +12,4 @@
   **** only run sudo command if ansible_sudo_pass defined
 ** do-config
 *** keyscan once only, after droplet creation
+*** autoadd client ssh keys if none
