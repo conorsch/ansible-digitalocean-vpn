@@ -1,0 +1,11 @@
+---
+- name: check current vpn status
+  command: nmcli --terse --fields vpn con status
+  register: vpn_status
+  changed_when: false
+
+- name: ensure vpn connection is activated
+  command: nmcli con up id "{{ digitalocean_vpn_nm_connection_name }}"
+  when: vpn_status.stdout == "no"
+  changed_when: vpn_status.stdout == "no"
+

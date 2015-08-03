@@ -1,0 +1,22 @@
+[connection]
+id={{ digitalocean_vpn_nm_connection_name }}
+uuid={{ '' | to_uuid }}
+type=vpn
+timestamp=1431630297
+
+[vpn]
+service-type=org.freedesktop.NetworkManager.openvpn
+ca={{ digitalocean_vpn_client_cert_dir }}/ca.crt
+key={{ digitalocean_vpn_client_cert_dir }}/client.key
+cert={{ digitalocean_vpn_client_cert_dir }}/client.crt
+
+comp-lzo=yes
+remote={{ vpn_droplet.droplet.ip_address }}
+connection-type=tls
+cert-pass-flags=0
+
+[ipv6]
+method=auto
+
+[ipv4]
+method=auto

@@ -1,5 +1,10 @@
 ## TODOs
 
-* Autogenerate VPN key for local use
-* Let enduser parametrize certain settings like DO Region
-* Automatic teardown on DigitalOcean-based droplet on inactivity
+* server setup
+** support multiple clients, e.g. laptop and phone
+
+* client setup
+** ensure client packages are installed, if necessary
+** make NetworkManager optional
+  *** generate .ovpn files, still useful on phones
+

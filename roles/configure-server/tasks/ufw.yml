@@ -1,0 +1,33 @@
+---
+- name: allow ssh through firewall
+  ufw:
+    rule: allow
+    port: 22
+    proto: tcp
+  notify: restart ufw
+
+- name: allow openvpn through firewall
+  ufw:
+    rule: allow
+    port: 1194
+  notify: restart ufw
+
+- name: copy ufw before.rules config file
+  copy:
+    src: ufw_before.rules
+    dest: /etc/ufw/before.rules
+  notify: restart ufw
+
+- name: set default ufw forward policy to accept
+  lineinfile:
+    dest: /etc/default/ufw
+    state: present
+    regexp: DEFAULT_FORWARD_POLICY="\w+"
+    line: DEFAULT_FORWARD_POLICY="ACCEPT"
+  notify: restart ufw
+
+- name: ensure ufw is running
+  service:
+    name: ufw
+    enabled: yes
+    state: started

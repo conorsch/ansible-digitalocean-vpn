@@ -1,0 +1,75 @@
+---
+
+- name: copy easy-rsa files to openvpn dir
+  command: cp -r /usr/share/easy-rsa/ /etc/openvpn
+  args:
+    creates: /etc/openvpn/easy-rsa
+  tags:
+    - easyrsa
+
+- name: ensure key directory exists
+  file:
+    path: /etc/openvpn/easy-rsa/keys
+    state: directory
+    owner: root
+    group: root
+    mode: 0750
+  tags:
+    - easyrsa
+
+- name: copy openssl config
+  copy:
+    src: openssl-1.0.0.cnf
+    dest: /etc/openvpn/easy-rsa/openssl-1.0.0.cnf
+    owner: root
+    group: root
+  tags:
+    - openssl
+
+- name: copy vars file for cert generation
+  template:
+    src: easy_rsa_vars.j2
+    dest: /etc/openvpn/easy-rsa/vars
+  tags:
+    - easyrsa
+
+# hack to fix a bug, workaround documented here:
+# https://bugs.launchpad.net/ubuntu/+source/easy-rsa/+bug/1346776
+- name: patch pktool for headless cert generation
+  replace:
+    dest: /etc/openvpn/easy-rsa/pkitool
+    regexp: ^(\s+KEY_ALTNAMES=)"$KEY_CN"
+    replace: \1"DNS:${KEY_CN}"
+    backup: yes
+
+- name: build certificate authority
+  shell: source ./vars && ./pkitool --initca
+  args:
+    chdir: /etc/openvpn/easy-rsa
+    executable: /bin/bash
+    creates: /etc/openvpn/easy-rsa/keys/ca.crt
+  tags:
+    - easyrsa
+
+- name: ensure server certificate exists
+  shell: source ./vars && ./pkitool --server {{ssl_key_server_name}}
+  args:
+    chdir: /etc/openvpn/easy-rsa
+    executable: /bin/bash
+    creates: /etc/openvpn/easy-rsa/keys/server.crt
+#  register: server_cert_result
+#  failed_when: '"failed" in server_cert_result.stderr'
+  tags:
+    - easyrsa
+
+- name: ensure client certificate exists
+  shell: source ./vars && KEY_CN={{ssl_key_client_name}} ./pkitool {{ssl_key_client_name}}
+  args:
+    chdir: /etc/openvpn/easy-rsa
+    executable: /bin/bash
+    creates: /etc/openvpn/easy-rsa/keys/{{ssl_key_client_name}}.crt
+#  register: client_cert_result
+#  failed_when: '"failed" in client_cert_result.stderr'
+  tags:
+    - easyrsa
+

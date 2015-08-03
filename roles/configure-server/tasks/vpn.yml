@@ -1,0 +1,26 @@
+---
+- name: create openvpn config
+  template:
+    src: server.conf.j2
+    dest: /etc/openvpn/server.conf
+    backup: yes
+  notify:
+    - restart openvpn
+
+- name: generate dh2048 pem file
+  command: openssl dhparam -out /etc/openvpn/dh2048.pem 2048
+  args:
+    creates: /etc/openvpn/dh2048.pem
+
+- name: enable ipv4 forwarding
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: 1
+  changed_when: false
+
+- name: start openvpn server
+  service:
+    name: openvpn 
+    state: started
+    enabled: yes
+    args: "{{ssl_key_server_name}}"

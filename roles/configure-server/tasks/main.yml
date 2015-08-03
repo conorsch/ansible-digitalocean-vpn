@@ -1,0 +1,8 @@
+---
+# set up VPN on DigitalOcean droplet
+- include: packages.yml
+- include: easy_rsa.yml
+- include: ufw.yml
+- include: vpn.yml
+- include: fetch_keys.yml
+

@@ -1,0 +1,17 @@
+---
+- name: ensure openvpn key directory exists
+  file:
+    path: "{{ digitalocean_vpn_client_cert_dir }}"
+    state: directory
+    mode: "0755"
+    owner: root
+    group: root
+
+- name: copy key files to openvpn directory
+  copy:
+    src: openvpn_files/{{item}}
+    dest: "{{ digitalocean_vpn_client_cert_dir }}"
+  with_items:
+    - client.crt
+    - client.key
+    - ca.crt

@@ -1,0 +1,49 @@
+---
+# dopy is required for ansible digital_ocean module
+- name: ensure dopy is installed (for digitalocean API)
+  easy_install: name=dopy
+
+- name: create digitalocean droplet
+  digital_ocean:
+    command: droplet
+    state: present
+    name: vpn
+    unique_name: true
+
+    size_id: "{{ size_id }}"
+    region_id: "{{ region_id }}"
+    image_id: "{{ image_id }}"
+
+    api_token: "{{ do_api_token }}"
+    ssh_key_ids: "{{ do_ssh_key_id }}"
+
+    wait_timeout: 200
+  register: vpn_droplet
+  tags:
+    - digital_ocean
+    - provision
+
+  # populate dynamic inventory so newly created droplet can be
+  # referenced by the "server" subrole in parent playbook
+- name: add digitalocean vpn droplet to inventory
+  add_host:
+    name: digitalocean_vpn_server
+    ansible_ssh_host: "{{ vpn_droplet.droplet.ip_address }}"
+    ansible_ssh_user: root
+    ansible_ssh_private_key_file: "{{ do_ssh_key_file }}"
+
+  # populate dynamic inventory so client machine
+  # (i.e., the machine running this subrole)
+  # is accessible to the do vpn droplet
+- name: add client machine to dynamic inventory
+  add_host:
+    name: "{{ inventory_hostname }}"
+    groups: digitalocean_vpn_clients
+
+- name: flush old IPs from SSH known_hosts
+  shell: 'ssh-keygen -f "$HOME/.ssh/known_hosts" -R {{ vpn_droplet.droplet.ip_address }}'
+  changed_when: false
+
+- name: add new IP to SSH known_hosts
+  shell: 'ssh-keyscan -H -T 10 {{ vpn_droplet.droplet.ip_address }} >> "$HOME/.ssh/known_hosts"'
+  changed_when: false
