@@ -20,7 +20,7 @@
 
 - name: start openvpn server
   service:
-    name: openvpn 
+    name: openvpn
     state: started
     enabled: yes
     args: "{{ssl_key_server_name}}"

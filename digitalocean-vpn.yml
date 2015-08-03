@@ -20,4 +20,3 @@
     - { role: configure-client, tags: vpn }
   # sudo required for writing NetworkManager connection files,
   # which must be 600 root.
-  sudo: yes
