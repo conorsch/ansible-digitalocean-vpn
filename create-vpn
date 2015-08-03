@@ -31,15 +31,18 @@ localhost ansible_connection=local
 ansible_sudo_pass={{ client_sudo_pass }}
 """
 
-from getpass import getpass
-prompt = """
-You will need to enter your sudo password on the current machine,
-the VPN client. Elevated privileges are necessary for writing to
-NetworkManager system connections and installing dependencies.
+ASK_SUDO_PASS = False
+sudo_passwd = False
 
-sudo password for localhost: """
+if ASK_SUDO_PASS:
+    from getpass import getpass
+    prompt = """
+    You will need to enter your sudo password on the current machine,
+    the VPN client. Elevated privileges are necessary for writing to
+    NetworkManager system connections and installing dependencies.
+    sudo password for localhost: """
+    sudo_passwd = getpass(prompt)
 
-sudo_passwd = getpass(prompt)
 
 inventory_template = jinja2.Template(inventory)
 rendered_inventory = inventory_template.render({
