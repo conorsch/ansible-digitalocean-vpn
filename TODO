@@ -10,4 +10,5 @@
   *** check if `nmcli` is installed
   **** only run nmcli if installed
   **** only run sudo command if ansible_sudo_pass defined
-
+** do-config
+*** keyscan once only, after droplet creation
