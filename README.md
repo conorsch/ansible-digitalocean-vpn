@@ -7,9 +7,10 @@ You should have the following already installed:
 * Ansible
 * NetworkManager
 
-## Base image
-
-Sets up the basic server with `vim`, `git` installed, `nano` uninstalled etc.
+## VPN server
+Creates a DigitalOcean droplet for use as an OpenVPN server.
+Also configures your localhost as a VPN client and activates
+the connection via NetworkManager.
 
 Usage:
 ```bash
