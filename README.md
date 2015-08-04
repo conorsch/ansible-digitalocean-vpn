@@ -1,6 +1,40 @@
 # ansible-digitalocean-vpn
 Ansible role for creating personal VPN via DigitalOcean.
 
+
+### Usage
+```
+./create-vpn
+```
+
+Creates a DigitalOcean droplet for use as an OpenVPN server.
+Also configures your localhost as a VPN client and activates
+the connection via NetworkManager.
+
+
+If you already use Ansible to manage systems, then you don't
+need the `create-vpn` wrapper script, which handles creating
+dynamic inventories. Instead, just include the `digitalocean.yml`
+playbook in your `site.yml`, or run it directly:
+
+```
+ansible-playbook digitalocean.yml
+```
+
+If you have NetworkManager installed (particularly `nmcli`), then the VPN connection
+will be automatically activated. If you don't have NetworkManager, use the
+OpenVPN config file at `openvpn_files/client.ovpn` to import into whatever
+you use to manage network settings.
+
+After running the playbook, check that you are really using VPN:
+
+```
+curl ipecho.net/plain
+```
+
+That command should return two different IP addresses with and without the VPN
+connection activated.
+
 ## Requirements
 
 * ansible
@@ -8,39 +42,7 @@ Ansible role for creating personal VPN via DigitalOcean.
 
 You should have Ansible installed. See [below for installation details](#installing-ansible).
 
-## VPN server
-Creates a DigitalOcean droplet for use as an OpenVPN server.
-Also configures your localhost as a VPN client and activates
-the connection via NetworkManager.
-
-Usage:
-```
-./create-vpn
-```
-
-If you already use Ansible to manage systems, then you don't
-need the `create-vpn` wrapper script, which handles creating
-dynamic inventories. Instead, just include the `digitalocean.yml`
-playbook, or run it directly:
-
-```
-ansible-playbook digitalocean.yml
-```
-
-## OpenVPN server
-Spins up a DigitalOcean droplet named `vpn` and configures it as an
-OpenVPN server. If a droplet named `vpn` already exists, then the script will use that,
-and skip creating the droplet.
-
-If you have NetworkManager installed (particularly `nmcli`), then the VPN connection
-will be automatically activated. If you don't have NetworkManager, use the
-OpenVPN config file at `openvpn_files/client.ovpn` to import into whatever
-you use to manage network settings.
-
-After running the playbook, check that you are really using VPN: `curl ipecho.net/plain`
-
-## DigitalOcean API
-
+### DigitalOcean API
 In order to provision DigitalOcean droplets, you'll need to configure
 API access to DigitalOcean. Make sure to use v2 of the API.
 
@@ -62,7 +64,7 @@ ansible -m digital_ocean -a 'command=ssh list_keys=true'
 Choose a key from that list and export its id as `DO_SSH_KEY_ID`.
 Also export the full path to the private key as `DO_SSH_KEY_FILE`,
 
-## Installing Ansible
+### Installing Ansible
 If you haven't used Ansible before, you'll need to install it to use this script.
 On most platforms, the simplest way is to use pip:
 
@@ -79,7 +81,7 @@ sudo apt-get update
 sudo apt-get install ansible
 ```
 
-## Setting up DigitalOcean
+### Setting up DigitalOcean
 If you don't have a DigitalOcean account, you can sign up for one
 via [this affiliate link](https://www.digitalocean.com/?refcode=2b67db67a01d)
  and you'll get $10 credit, as will I. (The website is digitalocean.com/signup if you don't want to use an affiliate link.)
