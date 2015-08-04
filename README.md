@@ -1,6 +1,6 @@
 # ansible-digitalocean-vpn
-Ansible role for creating personal VPN via DigitalOcean.
-
+Ansible role for creating a personal VPN via DigitalOcean.
+Includes a wrapper script for bootstrapping an OpenVPN server.
 
 ### Usage
 ```
