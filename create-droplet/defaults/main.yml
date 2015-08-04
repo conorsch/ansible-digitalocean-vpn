@@ -18,4 +18,4 @@ vpn_droplet_name: vpn
 region_id: "sfo1"
 size_id: "512mb"
 # Ubuntu 14.04 64-bit is 12790328
-image_id: 12790328
+image_id: "ubuntu-14-04-x64"
