@@ -1,13 +1,19 @@
 ---
-- name: create openvpn config file
+- name: create networkmanager connection config file
   template:
     src: do-vpn-nm-conn.j2
+    dest: openvpn_files/do-vpn.nm
+    mode: "0600"
+
+- name: create ovpn client config file
+  template:
+    src: client.ovpn.j2
     dest: openvpn_files/client.ovpn
     mode: "0600"
 
 - name: add openvpn config to networkmanager system-settings
   copy:
-    src: openvpn_files/client.ovpn
+    src: openvpn_files/do-vpn.nm
     dest: /etc/NetworkManager/system-connections/do-vpn
     mode: "0600"
     owner: root
