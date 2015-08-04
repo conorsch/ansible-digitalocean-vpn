@@ -5,7 +5,7 @@ dev tun
 ca /etc/openvpn/easy-rsa/keys/ca.crt
 cert /etc/openvpn/easy-rsa/keys/server.crt
 key /etc/openvpn/easy-rsa/keys/server.key
-dh dh2048.pem
+dh dh{{ ssl_key_bit_length }}.pem
 
 server 10.8.0.0 255.255.255.0
 ifconfig-pool-persist ipp.txt

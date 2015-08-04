@@ -16,3 +16,4 @@ ssl_key_ou: PersonalVPN
 # X509 Subject Field
 ssl_key_server_name: server
 ssl_key_client_name: client
+ssl_key_bit_length: 2048

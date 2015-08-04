@@ -7,10 +7,13 @@
   notify:
     - restart openvpn
 
-- name: generate dh2048 pem file
-  command: openssl dhparam -out /etc/openvpn/dh2048.pem 2048
+- name: generate pem file
+  command: >
+    openssl dhparam
+    -out /etc/openvpn/dh{{ ssl_key_bit_length }}.pem
+    {{ ssl_key_bit_length }}
   args:
-    creates: /etc/openvpn/dh2048.pem
+    creates: /etc/openvpn/dh{{ ssl_key_bit_length }}.pem
 
 - name: enable ipv4 forwarding
   sysctl:
