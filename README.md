@@ -88,8 +88,14 @@ via [this affiliate link](https://www.digitalocean.com/?refcode=2b67db67a01d)
 Once you sign up, make sure to add an SSH key to your account so you can connect to your droplets.
 
 ## Contributing
+Pull requests are welcome. Thanks to Timur Batyrshin for the [original version](https://github.com/timurb/ansible-digitalocean-vpn).
 
-Pull requests are welcome. Thanks to Timur Batyrshin for the original version.
+### Resources
+These resources were invaluable while writing the script.
+
+  * [@timurb's original version](https://github.com/timurb/ansible-digitalocean-vpn)
+  * [DigitalOcean OpenVPN guide](https://www.digitalocean.com/community/tutorials/how-to-set-up-an-openvpn-server-on-ubuntu-14-04)
+  * [NetworkManager dbus docs](https://developer.gnome.org/NetworkManager/unstable/spec.html#org.freedesktop.NetworkManager.Settings.Connection)
 
 ## License and Author
 
