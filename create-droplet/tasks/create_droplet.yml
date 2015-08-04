@@ -3,15 +3,6 @@
 - name: ensure dopy is installed (for digitalocean API)
   easy_install: name=dopy
 
-- name: add ssh config to digitalocean if necessary
-  digital_ocean:
-    command: ssh
-    api_token: "{{ do_api_token }}"
-    ssh_pub_key: "{{ lookup('file', do_ssh_pub_key_file) }}"
-    name: "{{ ssh_pub_key_name | default('default_ssh_key')}}"
-    state: present
-  register: ssh_info
-
 - name: create digitalocean droplet
   digital_ocean:
     command: droplet
@@ -24,7 +15,7 @@
     image_id: "{{ image_id }}"
 
     api_token: "{{ do_api_token }}"
-    ssh_key_ids: "{{ ssh_info.ssh_key.id }}"
+    ssh_key_ids: "{{ do_ssh_key_id }}"
 
     wait_timeout: 200
   register: vpn_droplet
