@@ -45,11 +45,18 @@ Export the following environment variables on the VPN client:
 ```
 DO_API_TOKEN    # v2_api_token_here
 DO_SSH_KEY_ID   # integer slug for SSH key saved in DigitalOcean
-DO_SSH_KEY_FILE # local path to SSH private key on disk, defaults to ~/.ssh/digital_ocean
+DO_SSH_KEY_FILE # local path to SSH private key on disk
 ```
 
 Once you've exported `DO_API_TOKEN`, you can find the other values via the
-`digital_ocean.py` inventory script shipped with Ansible.
+`digital_ocean.py` plugin shipped with this role:
+
+```
+ansible -m digital_ocean -a 'command=ssh list_keys=true'
+```
+
+Choose a key from that list and export its id as `DO_SSH_KEY_ID`.
+Also export the full path to the private key as `DO_SSH_KEY_FILE`,
 
 ## Installing Ansible
 If you haven't used Ansible before, you'll need to install it to use this script.
