@@ -2,6 +2,10 @@
 Ansible role for creating personal VPN via DigitalOcean.
 
 ## Requirements
+
+* ansible
+* DigitalOcean account
+
 You should have Ansible installed. See [below for installation details](#installing-ansible).
 
 ## VPN server
@@ -74,6 +78,12 @@ sudo apt-add-repository ppa:ansible/ansible
 sudo apt-get update
 sudo apt-get install ansible
 ```
+
+## Setting up DigitalOcean
+If you don't have a DigitalOcean account, you can sign up for one
+via [this affiliate link](https://www.digitalocean.com/?refcode=2b67db67a01d)
+ and you'll get $10 credit, as will I. (The website is digitalocean.com/signup if you don't want to use an affiliate link.)
+Once you sign up, make sure to add an SSH key to your account so you can connect to your droplets.
 
 ## Contributing
 
