@@ -374,6 +374,13 @@ def core(module):
 
     elif command == 'ssh':
         SSH.setup(api_token)
+
+        # Hack to list keys. Need to check for list_keys
+        # before getkeyordie runs below.
+        if module.params['list_keys']:
+            all_keys = [k.to_json() for k in SSH.list_all()]
+            module.exit_json(changed=False, ssh_keys=all_keys)
+
         name = getkeyordie('name')
         if state in ('active', 'present'):
             key = SSH.find(name)
@@ -410,6 +417,7 @@ def main():
             wait = dict(type='bool', default=True),
             wait_timeout = dict(default=300, type='int'),
             ssh_pub_key = dict(type='str'),
+            list_keys = dict(type='bool', default='no'),
         ),
         required_together = (
             ['size_id', 'image_id', 'region_id'],
@@ -420,7 +428,7 @@ def main():
             ['region_id', 'ssh_pub_key'],
         ),
         required_one_of = (
-            ['id', 'name'],
+            ['id', 'name', 'list_keys'],
         ),
     )
     if not HAS_DOPY:
