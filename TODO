@@ -3,8 +3,11 @@
 * server setup
 ** support multiple clients, e.g. laptop and phone
 
+* docs
+** how to look up keys
+** how to sign up for digitalocean
+
 * client setup
 ** ensure client packages are installed, if necessary
 ** make NetworkManager optional
-  *** generate .ovpn files, still useful on phones
-  **** only run sudo command if ansible_sudo_pass defined
+
