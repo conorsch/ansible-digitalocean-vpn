@@ -42,6 +42,23 @@ connection activated.
 
 You should have Ansible installed. See [below for installation details](#installing-ansible).
 
+### Installing Ansible
+If you haven't used Ansible before, you'll need to install it to use this script.
+On most platforms, the simplest way is to use pip:
+
+```
+pip install --upgrade ansible
+```
+
+On Debian/Ubuntu, consider using the PPA, so updates are installed
+automatically as part of the system-wide package management:
+
+```
+sudo apt-add-repository ppa:ansible/ansible
+sudo apt-get update
+sudo apt-get install ansible
+```
+
 ### DigitalOcean API
 In order to provision DigitalOcean droplets, you'll need to configure
 API access to DigitalOcean. Make sure to use v2 of the API.
@@ -64,27 +81,10 @@ ansible -m digital_ocean -a 'command=ssh list_keys=true'
 Choose a key from that list and export its id as `DO_SSH_KEY_ID`.
 Also export the full path to the private key as `DO_SSH_KEY_FILE`,
 
-### Installing Ansible
-If you haven't used Ansible before, you'll need to install it to use this script.
-On most platforms, the simplest way is to use pip:
-
-```
-pip install --upgrade ansible
-```
-
-On Debian/Ubuntu, consider using the PPA, so updates are installed
-automatically as part of the system-wide package management:
-
-```
-sudo apt-add-repository ppa:ansible/ansible
-sudo apt-get update
-sudo apt-get install ansible
-```
-
-### Setting up DigitalOcean
+### Setting up a DigitalOcean account
 If you don't have a DigitalOcean account, you can sign up for one
 via [this affiliate link](https://www.digitalocean.com/?refcode=2b67db67a01d)
- and you'll get $10 credit, as will I. (The website is digitalocean.com/signup if you don't want to use an affiliate link.)
+ and we'll both get $10 credit. (The website is digitalocean.com/signup if you don't want to use an affiliate link.)
 Once you sign up, make sure to add an SSH key to your account so you can connect to your droplets.
 
 ## Contributing
