@@ -4,12 +4,14 @@
     src: do-vpn-nm-conn.j2
     dest: openvpn_files/do-vpn.nm
     mode: "0600"
+  when: vpn_auto_configure
 
 - name: create ovpn client config file
   template:
     src: client.ovpn.j2
-    dest: openvpn_files/client.ovpn
+    dest: openvpn_files/{{ item }}.ovpn
     mode: "0600"
+  with_items: ssl_key_client_names
 
 - name: add openvpn config to networkmanager system-settings
   copy:

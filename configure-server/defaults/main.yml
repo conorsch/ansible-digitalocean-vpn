@@ -2,7 +2,6 @@
 openvpn_server_ip: 10.8.0.1
 openvpn_client_ip: 10.8.0.2
 openvpn_keepalive: "10 60"
-openvpn_keyfile: static.key
 openvpn_compression: true
 openvpn_sleep_time: 300
 
@@ -15,5 +14,9 @@ ssl_key_email: person2@example.com
 ssl_key_ou: PersonalVPN
 # X509 Subject Field
 ssl_key_server_name: server
-ssl_key_client_name: client
+ssl_key_client_names:
+  - laptop
+  - phone
+
 ssl_key_bit_length: 2048
+

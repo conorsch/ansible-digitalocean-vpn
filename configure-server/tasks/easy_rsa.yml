@@ -72,13 +72,14 @@
     - easyrsa
 
 - name: ensure client certificate exists
-  shell: source ./vars && KEY_CN={{ssl_key_client_name}} ./pkitool {{ssl_key_client_name}}
+  shell: source ./vars && KEY_CN={{ item }} ./pkitool {{ item }}
   args:
     chdir: /etc/openvpn/easy-rsa
     executable: /bin/bash
-    creates: /etc/openvpn/easy-rsa/keys/{{ssl_key_client_name}}.crt
+    creates: /etc/openvpn/easy-rsa/keys/{{ item }}.crt
 #  register: client_cert_result
 #  failed_when: '"failed" in client_cert_result.stderr'
+  with_items: ssl_key_client_names
   tags:
     - easyrsa
 

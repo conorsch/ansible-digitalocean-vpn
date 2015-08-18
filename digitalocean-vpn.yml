@@ -6,10 +6,14 @@
 
 - name: configure vpn server
   hosts: digitalocean_vpn_server
+  vars_files:
+    - vars.yml
   roles:
     - { role: configure-server, tags: vpn }
 
 - name: configure vpn client
+  vars_files:
+    - vars.yml
 #  vars_prompt:
 #    - name: ansible_sudo_pass
 #      prompt: Sudo password

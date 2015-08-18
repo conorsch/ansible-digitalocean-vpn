@@ -1,4 +1,4 @@
-{{ digitalocean_vpn_client_name }}
+{{ digitalocean_vpn_client_name }}-{{ item }}
 dev tun
 proto udp
 remote {{ vpn_droplet.droplet.ip_address }} 1194
@@ -17,10 +17,11 @@ comp-lzo
 {{ lookup('file', 'openvpn_files/ca.crt') }}
 </ca>
 
+
 <cert>
-{{ lookup('file', 'openvpn_files/client.crt') }}
+{{ lookup('file', "openvpn_files/" + item + ".crt") }}
 </cert>
 
 <key>
-{{ lookup('file', 'openvpn_files/client.key') }}
+{{ lookup('file', 'openvpn_files/' + item + '.key') }}
 </key>
