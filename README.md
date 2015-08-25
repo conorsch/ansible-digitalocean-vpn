@@ -79,11 +79,11 @@ Once you've exported `DO_API_TOKEN`, you can find the other values via the
 `digital_ocean.py` plugin shipped with this role:
 
 ```
-ansible -m digital_ocean -a 'command=ssh list_keys=true'
+./display-ssh-key-ids
 ```
 
 Choose a key from that list and export its id as `DO_SSH_KEY_ID`.
-Also export the full path to the private key as `DO_SSH_KEY_FILE`,
+Also export the full path to the private key as `DO_SSH_KEY_FILE`.
 
 ### Setting up a DigitalOcean account
 If you don't have a DigitalOcean account, you can sign up for one

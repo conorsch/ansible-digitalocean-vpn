@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e
+
+if [[ -z ${DO_API_TOKEN} ]] ; then
+    echo "DigitalOcean API token not found. Export DO_API_TOKEN."
+    exit 1
+fi
+
+tmpfile=$(mktemp)
+cat > $tmpfile <<INVENTORY
+localhost ansible_connection=local
+INVENTORY
+
+ansible -i "$tmpfile" -m digital_ocean -a 'command=ssh list_keys=true' localhost "$@"
