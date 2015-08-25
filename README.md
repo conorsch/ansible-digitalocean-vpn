@@ -43,7 +43,7 @@ connection activated.
 You should have Ansible installed. See [below for installation details](#installing-ansible).
 
 ### Installing Ansible
-If you haven't used Ansible before, you'll need to install it to use this script.
+If you haven't used Ansible before, you'll need to install it before provisioning your VPN server.
 On most platforms, the simplest way is to use pip:
 
 ```
@@ -58,6 +58,10 @@ sudo apt-add-repository ppa:ansible/ansible
 sudo apt-get update
 sudo apt-get install ansible
 ```
+
+If you run into trouble, see the [official Ansible docs](http://docs.ansible.com/ansible/intro_installation.html#latest-releases-via-pip) for installation help.
+On OS X Mavericks, you may need to [provide an additional flag](https://stackoverflow.com/questions/22390655/ansible-installation-clang-error-unknown-argument-mno-fused-madd)
+to the pip install command.
 
 ### DigitalOcean API
 In order to provision DigitalOcean droplets, you'll need to configure
