@@ -27,7 +27,5 @@
   notify: restart ufw
 
 - name: ensure ufw is running
-  service:
-    name: ufw
-    enabled: yes
-    state: started
+  ufw:
+    state: enabled
