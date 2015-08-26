@@ -176,13 +176,17 @@ try:
     from dopy.manager import DoError, DoManager
     if LooseVersion(dopy.__version__) < LooseVersion('0.3.2'):
         HAS_DOPY = False
+
 except ImportError:
     HAS_DOPY = False
 
-class TimeoutError(DoError):
-    def __init__(self, msg, id):
-        super(TimeoutError, self).__init__(msg)
-        self.id = id
+# DoError is imported above, so check
+# for presence of dopy before referencing class.
+if HAS_DOPY:
+    class TimeoutError(DoError):
+        def __init__(self, msg, id):
+            super(TimeoutError, self).__init__(msg)
+            self.id = id
 
 class JsonfyMixIn(object):
     def to_json(self):
