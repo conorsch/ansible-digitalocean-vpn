@@ -1,15 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env python
+import tempfile, os, subprocess
 
-set -e
+if not 'DO_API_TOKEN' in os.environ:
+    print("DigitalOcean API token not found. Export DO_API_TOKEN.")
+    exit(1)
 
-if [[ -z ${DO_API_TOKEN} ]] ; then
-    echo "DigitalOcean API token not found. Export DO_API_TOKEN."
-    exit 1
-fi
-
-tmpfile=$(mktemp)
-cat > $tmpfile <<INVENTORY
-localhost ansible_connection=local
-INVENTORY
-
-ansible -i "$tmpfile" -m digital_ocean -a 'command=ssh list_keys=true' localhost "$@"
+with tempfile.NamedTemporaryFile() as fp:
+    fp.write("localhost ansible_connection=local")
+    invocation = "ansible localhost -i {tmpfile} -m digital_ocean -a".format(tmpfile=fp.name).split(' ')
+    invocation.append('command=ssh list_keys=true')
+    subprocess.call(invocation)
