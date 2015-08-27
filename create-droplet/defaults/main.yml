@@ -17,5 +17,10 @@ vpn_droplet_name: vpn
 # rather than integer IDs.
 region_id: "sfo1"
 size_id: "512mb"
+
+
 # Ubuntu 14.04 64-bit is 12790328
-image_id: "ubuntu-14-04-x64"
+# image_id: "ubuntu-14-04-x64"
+# Debian 8 64-bit has slug "debian-8-x64" and id "12778278"
+image_id: "12778278"
+
