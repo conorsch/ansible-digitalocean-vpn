@@ -4,6 +4,7 @@ Includes a wrapper script for bootstrapping an OpenVPN server.
 
 ### Usage
 ```
+pip install dopy
 ./create-vpn
 ```
 
