@@ -22,8 +22,19 @@
   changed_when: false
 
 - name: start openvpn server
+  # Using the service module works in Ubuntu 14.04
+  # in Ansible v1.9.2 and later.
   service:
     name: openvpn
     state: started
     enabled: yes
-    args: "{{ssl_key_server_name}}"
+    args: "{{ ssl_key_server_name }}"
+  when: ansible_distribution == "Ubuntu"
+
+- name: start openvpn server
+  # Avoiding use of problematic `service` module pending
+  # release of Ansible v2.0, see https://github.com/ansible/ansible-modules-core/issues/1298
+  # Only noticed problem on Debian, because Debian has already migrated
+  # to systemd (huzzah!).
+  command: service openvpn start {{ ssl_key_server_name }}
+  when: ansible_distribution == "Debian"
