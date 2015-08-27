@@ -19,7 +19,7 @@ dynamic inventories. Instead, just include the `digitalocean.yml`
 playbook in your `site.yml`, or run it directly:
 
 ```
-ansible-playbook digitalocean.yml
+ansible-playbook digitalocean-vpn.yml
 ```
 
 If you have NetworkManager installed (particularly `nmcli`), then the VPN connection
