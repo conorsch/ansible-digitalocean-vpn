@@ -1,7 +1,11 @@
 ---
 digitalocean_vpn_nm_connection_name: DigitalOcean VPN
 digitalocean_vpn_client_name: client
-digitalocean_vpn_client_cert_dir: /etc/openvpn
+
+# Need sudo access to write to /etc/openvpn,
+# so make the default directory for fetching
+# cert files relative to the playbook.
+digitalocean_vpn_client_cert_dir: openvpn_files
 # Need sudo access to write to /etc/NetworkManager,
 # so make that task opt-in.
 vpn_auto_configure: false
