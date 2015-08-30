@@ -3,9 +3,7 @@
   file:
     path: "{{ digitalocean_vpn_client_cert_dir }}"
     state: directory
-    mode: "0755"
-    owner: root
-    group: root
+    mode: "0750"
 
 - name: copy key files to openvpn directory
   copy:
