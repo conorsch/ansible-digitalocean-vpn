@@ -28,8 +28,16 @@
   hosts: digitalocean_vpn_client
   roles:
     - { role: configure-client,
-        vpn_auto_configure: true,
+        # Autoconfiguration for VPN client (localhost) via nmcli
+        # is disabled by default. nmcli versions change quickly,
+        # so will likely need to do version checking, which is a PITA.
+        # Better yet, there might be a fine Ansible module around the corner.
+        vpn_auto_configure: false,
         tags: vpn,
       }
-  # sudo required for writing NetworkManager connection files,
-  # which must be 600 root.
+  # sudo required for writing NetworkManager connection
+  # files in /etc/NetworkManager, and setting them to 600.
+  # The config files must be root-owned 600, otherwise
+  # NM won't trust them. Rather than prompt folks for a sudo
+  # password, I'd like to find a way to leverage dbus or nmcli
+  # to create the connection without superuser permissions.
