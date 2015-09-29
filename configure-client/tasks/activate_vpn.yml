@@ -25,3 +25,12 @@
   changed_when: vpn_status.stdout == "no"
   when: has_nmcli and vpn_auto_configure and vpn_status.stdout == "no"
 
+- name: Explain manual setup for VPN connection.
+  debug:
+    msg: >
+      Your VPN server is ready. The configuration files have been
+      fetched back to {{ digitalocean_vpn_client_cert_dir }}.
+      Create a new VPN connection in in the networking settings
+      for your OS. The IP address for the VPN server is
+      {{ hostvars['vpn'].ansible_default_ipv4.address }}.
+  when: not vpn_auto_configure
