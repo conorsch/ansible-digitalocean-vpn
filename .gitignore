@@ -2,3 +2,4 @@
 *.swp
 ansible-digital_ocean.cache
 openvpn_files/*
+roles/*
