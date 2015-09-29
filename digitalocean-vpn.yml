@@ -1,17 +1,22 @@
 ---
-- name: create vpn server
-  hosts: digitalocean_vpn_client
+- name: Create VPN server on DigitalOcean.
+  hosts: localhost
   roles:
-    - { role: create-droplet, tags: vpn }
+    - { role: conorsch.create-droplet,
+        droplet_name: vpn,
+        tags: vpn,
+      }
 
-- name: configure vpn server
+- name: Configure VPN server.
   hosts: digitalocean_vpn_server
   vars_files:
     - vars.yml
   roles:
-    - { role: configure-server, tags: vpn }
+    - { role: configure-server,
+        tags: vpn,
+      }
 
-- name: configure vpn client
+- name: Configure VPN client.
   vars_files:
     - vars.yml
 #  vars_prompt:
