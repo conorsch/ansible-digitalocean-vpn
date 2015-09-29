@@ -1,4 +1,5 @@
 ---
+vpn_hostname: vpn
 ssl_key_client_names:
   - laptop
   - phone

@@ -11,7 +11,7 @@ key={{ digitalocean_vpn_client_cert_dir }}/client.key
 cert={{ digitalocean_vpn_client_cert_dir }}/client.crt
 
 comp-lzo=yes
-remote={{ vpn_droplet.droplet.ip_address }}
+remote={{ hostvars["vpn"].ansible_default_ipv4.ip_address }}
 connection-type=tls
 cert-pass-flags=0
 

@@ -2,8 +2,10 @@
 - name: Create VPN server on DigitalOcean.
   hosts: localhost
   roles:
-    - { role: create-droplet,
+    - { role: ~/gits/ansible-roles/create-droplet,
         droplet_name: vpn,
+        droplet_groups: digitalocean_vpn_server,
+        droplet_private_networking: false,
         tags: vpn,
       }
 
