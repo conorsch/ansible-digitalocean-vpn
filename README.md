@@ -5,13 +5,13 @@ Includes a wrapper script for bootstrapping an OpenVPN server.
 ### Usage
 ```
 pip install dopy
+ansible-galaxy install -r requirements.yml --force
 ./create-vpn
 ```
 
 Creates a DigitalOcean droplet for use as an OpenVPN server.
 Also configures your localhost as a VPN client and activates
 the connection via NetworkManager.
-
 
 If you already use Ansible to manage systems, then you don't
 need the `create-vpn` wrapper script, which handles creating
