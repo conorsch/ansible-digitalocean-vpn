@@ -6,7 +6,7 @@
 #    mode: "0600"
 #  when: vpn_auto_configure
 
-- name: create ovpn client config file
+- name: Create local .ovpn config files for clients.
   template:
     src: client.ovpn.j2
     dest: openvpn_files/{{ item }}.ovpn

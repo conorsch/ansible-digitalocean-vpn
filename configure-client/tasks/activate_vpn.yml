@@ -1,12 +1,12 @@
 ---
-- name: check if nmcli is installed
+- name: Check if nmcli is installed.
   shell: hash nmcli &> /dev/null
   register: nmcli_result
   # Don't bail out if the shell command returns a non-zero exit code.
   ignore_errors: true
   changed_when: false
 
-- name: set host fact with nmcli status
+- name: Set host fact with nmcli status.
   # Store presence of nmcli as boolean in hostvar,
   # so it can be referenced elsewhere.
   # It'd be better to gather this fact in the normal
@@ -14,14 +14,14 @@
   set_fact:
     has_nmcli: "{{ nmcli_result.rc == 0 | bool }}"
 
-- name: check current vpn status
+- name: Check current status for VPN connection.
   command: nmcli --terse --fields vpn con status
   register: vpn_status
   changed_when: false
   when: has_nmcli and vpn_auto_configure
 
-- name: ensure vpn connection is activated
-  command: nmcli con up id "{{ digitalocean_vpn_nm_connection_name }}"
+- name: Activate VPN connection.
+  command: nmcli connection up id "{{ digitalocean_vpn_nm_connection_name }}"
   changed_when: vpn_status.stdout == "no"
   when: has_nmcli and vpn_auto_configure and vpn_status.stdout == "no"
 

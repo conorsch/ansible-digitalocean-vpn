@@ -1,5 +1,5 @@
 ---
-- name: ensure openvpn key directory exists
+- name: Create OpenVPN key directory.
   file:
     path: "{{ digitalocean_vpn_client_cert_dir }}"
     state: directory
