@@ -1,5 +1,10 @@
 ---
 vpn_hostname: vpn
+digitalocean_vpn_client_names:
+  - laptop
+  - phone
 ssl_key_client_names:
   - laptop
   - phone
+
+

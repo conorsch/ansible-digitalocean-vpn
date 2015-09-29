@@ -5,12 +5,24 @@
     state: directory
     mode: "0750"
 
-- name: copy key files to openvpn directory
+- name: Copy CA file to client.
   copy:
-    src: openvpn_files/{{item}}
+    src: openvpn_files/{{ item }}
     dest: "{{ digitalocean_vpn_client_cert_dir }}"
   with_items:
-    - client.crt
-    - client.key
     - ca.crt
   when: vpn_auto_configure
+
+- name: Copy client certificates to localhost.
+  copy:
+    src: openvpn_files/{{ item }}.crt
+    dest: "{{ digitalocean_vpn_client_cert_dir }}"
+  with_items: digitalocean_vpn_client_names
+
+- name: Copy client keys to localhost.
+  copy:
+    src: openvpn_files/{{ item }}.key
+    dest: "{{ digitalocean_vpn_client_cert_dir }}"
+  with_items: digitalocean_vpn_client_names
+  when: vpn_auto_configure
+

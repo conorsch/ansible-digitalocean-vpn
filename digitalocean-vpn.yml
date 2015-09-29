@@ -27,6 +27,9 @@
 #      private: yes
   hosts: digitalocean_vpn_client
   roles:
-    - { role: configure-client, tags: vpn }
+    - { role: configure-client,
+        vpn_auto_configure: true,
+        tags: vpn,
+      }
   # sudo required for writing NetworkManager connection files,
   # which must be 600 root.

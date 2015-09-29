@@ -4,6 +4,7 @@
     src: server.conf.j2
     dest: /etc/openvpn/server.conf
     backup: yes
+  with_items: digitalocean_vpn_client_names
   notify:
     - restart openvpn
 

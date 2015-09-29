@@ -1,4 +1,4 @@
-{{ digitalocean_vpn_client_name }}-{{ item }}
+{{ item }}
 dev tun
 proto udp
 remote {{ hostvars["vpn"].ansible_default_ipv4.address }} 1194

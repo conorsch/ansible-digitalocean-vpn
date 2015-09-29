@@ -1,23 +1,23 @@
 ---
-- name: create networkmanager connection config file
-  template:
-    src: do-vpn-nm-conn.j2
-    dest: openvpn_files/do-vpn.nm
-    mode: "0600"
-  when: vpn_auto_configure
+#- name: create networkmanager connection config file
+#  template:
+#    src: do-vpn-nm-conn.j2
+#    dest: openvpn_files/do-vpn.nm
+#    mode: "0600"
+#  when: vpn_auto_configure
 
 - name: create ovpn client config file
   template:
     src: client.ovpn.j2
     dest: openvpn_files/{{ item }}.ovpn
     mode: "0600"
-  with_items: ssl_key_client_names
+  with_items: digitalocean_vpn_client_names
 
-- name: add openvpn config to networkmanager system-settings
-  copy:
-    src: openvpn_files/do-vpn.nm
-    dest: /etc/NetworkManager/system-connections/do-vpn
-    mode: "0600"
-    owner: root
-    group: root
-  when: vpn_auto_configure
+#- name: add openvpn config to networkmanager system-settings
+#  copy:
+#    src: openvpn_files/do-vpn.nm
+#    dest: /etc/NetworkManager/system-connections/do-vpn
+#    mode: "0600"
+#    owner: root
+#    group: root
+#  when: vpn_auto_configure
