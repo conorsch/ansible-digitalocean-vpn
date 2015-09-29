@@ -11,7 +11,6 @@
     dest: "{{ digitalocean_vpn_client_cert_dir }}"
   with_items:
     - ca.crt
-  when: vpn_auto_configure
 
 - name: Copy client certificates to localhost.
   copy:
@@ -24,5 +23,4 @@
     src: openvpn_files/{{ item }}.key
     dest: "{{ digitalocean_vpn_client_cert_dir }}"
   with_items: digitalocean_vpn_client_names
-  when: vpn_auto_configure
 

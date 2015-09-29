@@ -9,5 +9,5 @@ digitalocean_vpn_client_names:
 digitalocean_vpn_client_cert_dir: openvpn_files
 # Need sudo access to write to /etc/NetworkManager,
 # so make that task opt-in.
-vpn_auto_configure: true
+vpn_auto_configure: false
 
