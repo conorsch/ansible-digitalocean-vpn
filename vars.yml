@@ -7,4 +7,5 @@ ssl_key_client_names:
   - laptop
   - phone
 
+droplet_region_id: sfo1
 
