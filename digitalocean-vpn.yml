@@ -35,8 +35,6 @@
         - push "redirect-gateway def1 bypass-dhcp"
         - push "dhcp-option DNS 208.67.222.222"
         - push "dhcp-option DNS 208.67.220.220"
-        - persist-key
-        - persist-tun
       tags: vpn
     - role: configure-server
 
