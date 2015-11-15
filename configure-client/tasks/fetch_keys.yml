@@ -9,7 +9,7 @@
     mode: 0644
     flat: yes
     # don't fail on missing, since manual setup still possible
-  with_items: ssl_key_client_names
+  with_items: openvpn_clients
 
 - name: Copy key file to vpn client (from vpn_server to vpn_client)
   delegate_to: "{{ openvpn_server }}"
@@ -20,7 +20,7 @@
     mode: 0644
     flat: yes
     fail_on_missing: yes
-  with_items: ssl_key_client_names
+  with_items: openvpn_clients
 
 - name: Copy cert file to vpn client (from vpn_server to vpn_client)
   delegate_to: "{{ openvpn_server }}"
@@ -31,7 +31,7 @@
     mode: 0644
     flat: yes
     fail_on_missing: yes
-  with_items: ssl_key_client_names
+  with_items: openvpn_clients
 
 - name: Copy ca file to vpn client (from vpn_server to vpn_client)
   delegate_to: "{{ openvpn_server }}"
