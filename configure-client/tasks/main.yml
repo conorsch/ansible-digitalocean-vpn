@@ -1,4 +1,5 @@
 ---
+- include: fetch_keys.yml
 - include: manage_keys.yml
 - include: create_nm_connection.yml
 - include: activate_vpn.yml
