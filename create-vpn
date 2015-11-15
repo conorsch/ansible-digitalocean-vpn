@@ -26,28 +26,12 @@ runner_cb = callbacks.PlaybookRunnerCallbacks(stats, verbose=utils.VERBOSITY)
 inventory = """
 [digitalocean_vpn_client]
 localhost ansible_connection=local
-
-[digitalocean_vpn_client:vars]
-ansible_sudo_pass={{ client_sudo_pass }}
 """
-
-ASK_SUDO_PASS = False
-sudo_passwd = False
-
-if ASK_SUDO_PASS:
-    from getpass import getpass
-    prompt = """
-    You will need to enter your sudo password on the current machine,
-    the VPN client. Elevated privileges are necessary for writing to
-    NetworkManager system connections and installing dependencies.
-    sudo password for localhost: """
-    sudo_passwd = getpass(prompt)
 
 
 inventory_template = jinja2.Template(inventory)
 rendered_inventory = inventory_template.render({
-    'client_sudo_pass': sudo_passwd,
-    # and the rest of our variables
+    # placeholder dict for host_vars (currently unused)
 })
 
 # Create a temporary file and write the template string to it
@@ -64,6 +48,7 @@ pb = PlayBook(
     stats=stats,
 )
 
+# Run playbook to configure VPN.
 results = pb.run()
 
 # Ensure on_stats callback is called
