@@ -1,9 +1,11 @@
 ---
 - src: conorsch.update-everything
-  name: update-everything
   path: roles/
 
 - src: conorsch.create-droplet
-  name: create-droplet
+  path: roles/
+
+- src: https://github.com/Stouts/Stouts.openvpn
+  name: stouts.openvpn
   path: roles/
 
