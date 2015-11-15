@@ -1,24 +1,35 @@
 ---
-- name: allow ssh through firewall
+- name: Install ufw.
+  apt:
+    name: ufw
+    state: present
+
+- name: Enable IPv4 forwarding.
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: 1
+  changed_when: false
+
+- name: Allow SSH through firewall.
   ufw:
     rule: allow
     port: 22
     proto: tcp
   notify: restart ufw
 
-- name: allow openvpn through firewall
+- name: Allow OpenVPN through firewall.
   ufw:
     rule: allow
     port: 1194
   notify: restart ufw
 
-- name: copy ufw before.rules config file
+- name: Copy ufw before.rules config file.
   copy:
     src: ufw_before.rules
     dest: /etc/ufw/before.rules
   notify: restart ufw
 
-- name: set default ufw forward policy to accept
+- name: Set default ufw forward policy to accept.
   lineinfile:
     dest: /etc/default/ufw
     state: present
@@ -26,6 +37,7 @@
     line: DEFAULT_FORWARD_POLICY="ACCEPT"
   notify: restart ufw
 
-- name: ensure ufw is running
+- name: Ensure ufw is running.
   ufw:
-    state: enabled
+    state: running
+    enabled: yes
