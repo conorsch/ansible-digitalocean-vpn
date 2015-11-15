@@ -1,6 +1,8 @@
 ---
 - name: Create VPN server on DigitalOcean.
   hosts: localhost
+  connection: local
+  gather_facts: no
   vars_files:
     - vars.yml
   roles:
