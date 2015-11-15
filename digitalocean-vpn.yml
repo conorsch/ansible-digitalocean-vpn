@@ -30,6 +30,7 @@
       openvpn_clients:
         - laptop
         - phone
+      openvpn_use_pam: no
       tags: vpn
 
 - name: Configure VPN client.

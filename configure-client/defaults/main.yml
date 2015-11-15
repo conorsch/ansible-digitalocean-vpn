@@ -1,4 +1,5 @@
 ---
+openvpn_server: vpn
 digitalocean_vpn_nm_connection_name: DigitalOcean VPN
 digitalocean_vpn_client_names:
   - client

@@ -1,5 +1,6 @@
 ---
 vpn_hostname: vpn
+openvpn_server: "{{ vpn_hostname }}"
 digitalocean_vpn_client_names:
   - laptop
   - phone
