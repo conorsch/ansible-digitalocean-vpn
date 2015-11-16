@@ -22,6 +22,14 @@
 #    group: root
 #  when: vpn_auto_configure
 
+- name: Remove preexisting connection for VPN.
+  command: nmcli connection delete id "{{ digitalocean_vpn_nm_connection_name }}"
+  # nmcli returns 11 if connection does not exist
+  ignore_errors: yes
+  tags:
+    - jawn
+
+
 - name: Create connection for VPN.
   command: >
     nmcli connection add
