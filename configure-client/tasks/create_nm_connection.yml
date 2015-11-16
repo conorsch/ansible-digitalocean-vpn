@@ -1,31 +1,12 @@
 ---
-#- name: create networkmanager connection config file
-#  template:
-#    src: do-vpn-nm-conn.j2
-#    dest: openvpn_files/do-vpn.nm
-#    mode: "0600"
-#  when: vpn_auto_configure
+- name: Check for preexisting connection for VPN.
+  command: nmcli -t -f name,state connection
+  changed_when: false
+  register: nmcli_connection_check
 
-#- name: Create local .ovpn config files for clients.
-#  template:
-#    src: client.ovpn.j2
-#    dest: openvpn_files/{{ item }}.ovpn
-#    mode: "0600"
-#  with_items: digitalocean_vpn_client_names
-
-#- name: add openvpn config to networkmanager system-settings
-#  copy:
-#    src: openvpn_files/do-vpn.nm
-#    dest: /etc/NetworkManager/system-connections/do-vpn
-#    mode: "0600"
-#    owner: root
-#    group: root
-#  when: vpn_auto_configure
-
-- name: Remove preexisting connection for VPN.
-  command: nmcli connection delete id "{{ digitalocean_vpn_nm_connection_name }}"
-  # nmcli returns 11 if connection does not exist
-  ignore_errors: yes
+- name: Store running state of VPN.
+  set_fact:
+    digitalocean_vpn_exists: digitalocean_vpn_nm_connection_name in nmcli_connection_check.stdout
 
   # Hacky method for figuring out the absolute path of the client config directory.
 - name: Get current directory.
@@ -39,10 +20,14 @@
 
 - name: Check whether client cert exists.
   stat:
-    path: "{{ client_config_dir_fullpath }}/laptop.crt"
+    path: "{{ client_config_dir_fullpath }}"
   register: cert_check_result
 
-- debug: var=cert_check_result
+- name: Declare missing client config directory.
+  fail:
+    msg: >
+      Could not find client config directory at {{ client_config_dir_fullpath }}.
+  when: cert_check_result.stat.exists == false
 
 - name: Create connection for VPN.
   command: >
@@ -51,6 +36,7 @@
     ifname tun0
     type vpn
     vpn-type openvpn
+  when: digitalocean_vpn_nm_connection_name not in nmcli_connection_check.stdout
 
 - name: Add VPN config options to connection.
   command: >
@@ -68,4 +54,5 @@
 
 - name: Activate VPN connection.
   command: nmcli connection up id "{{ digitalocean_vpn_nm_connection_name }}"
+  when: "'{{ digitalocean_vpn_nm_connection_name }}:activated' not in nmcli_connection_check.stdout"
 
