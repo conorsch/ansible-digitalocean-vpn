@@ -6,12 +6,12 @@
 #    mode: "0600"
 #  when: vpn_auto_configure
 
-- name: Create local .ovpn config files for clients.
-  template:
-    src: client.ovpn.j2
-    dest: openvpn_files/{{ item }}.ovpn
-    mode: "0600"
-  with_items: digitalocean_vpn_client_names
+#- name: Create local .ovpn config files for clients.
+#  template:
+#    src: client.ovpn.j2
+#    dest: openvpn_files/{{ item }}.ovpn
+#    mode: "0600"
+#  with_items: digitalocean_vpn_client_names
 
 #- name: add openvpn config to networkmanager system-settings
 #  copy:
@@ -21,3 +21,14 @@
 #    owner: root
 #    group: root
 #  when: vpn_auto_configure
+
+- name: Create connection for VPN.
+  command: >
+    nmcli connection add
+    con-name "DigitalOcean VPN"
+    ifname tun0
+    type vpn
+    vpn-type openvpn
+  tags:
+    - jawn
+
