@@ -26,17 +26,46 @@
   command: nmcli connection delete id "{{ digitalocean_vpn_nm_connection_name }}"
   # nmcli returns 11 if connection does not exist
   ignore_errors: yes
-  tags:
-    - jawn
 
+  # Hacky method for figuring out the absolute path of the client config directory.
+- name: Get current directory.
+  command: pwd
+  changed_when: false
+  register: current_directory
+
+- name: Store fullpath to VPN client config directory.
+  set_fact:
+    client_config_dir_fullpath: "{{ current_directory.stdout }}/{{ digitalocean_vpn_client_cert_dir }}"
+
+- name: Check whether client cert exists.
+  stat:
+    path: "{{ client_config_dir_fullpath }}/laptop.crt"
+  register: cert_check_result
+
+- debug: var=cert_check_result
 
 - name: Create connection for VPN.
   command: >
     nmcli connection add
-    con-name "DigitalOcean VPN"
+    con-name "{{ digitalocean_vpn_nm_connection_name }}"
     ifname tun0
     type vpn
     vpn-type openvpn
-  tags:
-    - jawn
+
+- name: Add VPN config options to connection.
+  command: >
+    nmcli connection modify
+    id "{{ digitalocean_vpn_nm_connection_name }}"
+    vpn.data "
+    cert-pass-flags = 0,
+    key = {{ client_config_dir_fullpath }}/laptop.key,
+    connection-type = tls,
+    remote = {{ hostvars['vpn'].ansible_default_ipv4.address }},
+    cert = {{ client_config_dir_fullpath }}/laptop.crt,
+    ca = {{ client_config_dir_fullpath }}/ca.crt,
+    comp-lzo = yes
+    "
+
+- name: Activate VPN connection.
+  command: nmcli connection up id "{{ digitalocean_vpn_nm_connection_name }}"
 
