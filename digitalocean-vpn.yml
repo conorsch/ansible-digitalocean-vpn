@@ -10,6 +10,7 @@
       droplet_name: vpn
       droplet_groups: digitalocean_vpn_server
       droplet_private_networking: false
+      droplet_extra_wait_time: 15
       tags: vpn
 
 - name: Update droplet base packages.
