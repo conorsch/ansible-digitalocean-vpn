@@ -1,0 +1,4 @@
+---
+# OpenVPN configuration handled by stouts.openvpn dependency.
+# Just tacking on a few firewall rules.
+- include: ufw.yml

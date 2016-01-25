@@ -1,0 +1,5 @@
+---
+dependencies:
+  - role: conorsch.update-everything
+  - role: stouts.openvpn
+
