@@ -1,43 +1,14 @@
 ---
-- name: Create VPN server on DigitalOcean.
-  hosts: localhost
-  connection: local
-  gather_facts: no
+- name: Configure VPN server.
+  hosts: vpn
   vars_files:
     - vars.yml
-  roles:
-    - role: conorsch.create-droplet
-      droplet_name: vpn
-      droplet_groups: digitalocean_vpn_server
-      droplet_private_networking: false
-      droplet_extra_wait_time: 15
-      tags: vpn
-
-- name: Update droplet base packages.
-  hosts: digitalocean_vpn_server
-  user: root
-  sudo: no
   roles:
     - role: conorsch.update-everything
-
-- name: Configure VPN server.
-  hosts: digitalocean_vpn_server
-  # Hardcoding "root" as login user, since it's default
-  # on DigitalOcean. If you use a custom box with a
-  # different login account, remove this line.
-  user: root
-  vars_files:
-    - vars.yml
-  roles:
     - role: stouts.openvpn
       openvpn_clients:
         - laptop
         - phone
-      openvpn_use_pam: no
-      openvpn_server_options:
-        - push "redirect-gateway def1 bypass-dhcp"
-        - push "dhcp-option DNS 208.67.222.222"
-        - push "dhcp-option DNS 208.67.220.220"
       tags: vpn
 
     - role: openvpn-firewall
