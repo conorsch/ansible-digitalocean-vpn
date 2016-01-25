@@ -4,7 +4,7 @@
   fetch:
     src: /etc/openvpn/keys/{{ item }}.ovpn
     dest: openvpn_files/
-    mode: 0644
+    mode: "0600"
     flat: yes
     # don't fail on missing, since manual setup still possible
   with_items: openvpn_clients
@@ -13,7 +13,7 @@
   fetch:
     src: /etc/openvpn/keys/{{ item }}.key
     dest: openvpn_files/
-    mode: 0644
+    mode: "0600"
     flat: yes
     fail_on_missing: yes
   with_items: openvpn_clients
@@ -22,7 +22,7 @@
   fetch:
     src: /etc/openvpn/keys/{{ item }}.crt
     dest: openvpn_files/
-    mode: 0644
+    mode: "0600"
     flat: yes
     fail_on_missing: yes
   with_items: openvpn_clients
@@ -31,7 +31,7 @@
   fetch:
     src: /etc/openvpn/keys/ca.crt
     dest: openvpn_files/
-    mode: 0644
+    mode: "0600"
     flat: yes
     fail_on_missing: yes
 
