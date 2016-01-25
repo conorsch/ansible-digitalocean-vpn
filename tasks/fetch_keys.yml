@@ -1,8 +1,6 @@
 ---
 # pass newly configured keys to client host
 - name: Copy ovpn file to VPN client. (from vpn_server to vpn_client)
-  delegate_to: "{{ openvpn_server }}"
-  remote_user: root
   fetch:
     src: /etc/openvpn/keys/{{ item }}.ovpn
     dest: openvpn_files/
@@ -12,8 +10,6 @@
   with_items: openvpn_clients
 
 - name: Copy key file to vpn client (from vpn_server to vpn_client)
-  delegate_to: "{{ openvpn_server }}"
-  remote_user: root
   fetch:
     src: /etc/openvpn/keys/{{ item }}.key
     dest: openvpn_files/
@@ -23,8 +19,6 @@
   with_items: openvpn_clients
 
 - name: Copy cert file to vpn client (from vpn_server to vpn_client)
-  delegate_to: "{{ openvpn_server }}"
-  remote_user: root
   fetch:
     src: /etc/openvpn/keys/{{ item }}.crt
     dest: openvpn_files/
@@ -34,8 +28,6 @@
   with_items: openvpn_clients
 
 - name: Copy ca file to vpn client (from vpn_server to vpn_client)
-  delegate_to: "{{ openvpn_server }}"
-  remote_user: root
   fetch:
     src: /etc/openvpn/keys/ca.crt
     dest: openvpn_files/

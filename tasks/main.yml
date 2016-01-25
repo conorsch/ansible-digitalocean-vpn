@@ -2,3 +2,10 @@
 # OpenVPN configuration handled by stouts.openvpn dependency.
 # Just tacking on a few firewall rules.
 - include: ufw.yml
+
+- include: fetch_keys.yml
+  when: digitalocean_vpn_fetch_keys == true
+        or digitalocean_vpn_autoconfigure == true
+
+- include: create_nm_connection.yml
+  when: digitalocean_vpn_autoconfigure == true

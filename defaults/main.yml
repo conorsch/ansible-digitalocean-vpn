@@ -10,3 +10,16 @@ openvpn_server_options:
   - push "redirect-gateway def1 bypass-dhcp"
   - push "dhcp-option DNS 208.67.222.222"
   - push "dhcp-option DNS 208.67.220.220"
+
+# Hostname, used for delegate_to tasks fetching back keys
+openvpn_server: vpn
+
+# Don't automatically fetch private keys back to localhost.
+# Enable this if you want.
+digitalocean_vpn_fetch_keys: false
+
+# Don't automatically create a new NetworkManager connection via nmcli.
+# The nmcli command-line API changed significantly recently, so different OSes
+# will have different versions and I don't have good notes on sorting that out yet.
+# Currently tasks seem to work fine in Ubuntu 15.04, FWIW.
+digitalocean_vpn_autoconfigure: false
