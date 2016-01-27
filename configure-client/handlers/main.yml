@@ -1,6 +1,0 @@
----
-- name: activate vpn connection
-  command: nmcli con up id "{{ digitalocean_vpn_nm_connection_name }}"
-
-- name: deactivate vpn connection
-  command: nmcli con down id "{{ digitalocean_vpn_nm_connection_name }}"
