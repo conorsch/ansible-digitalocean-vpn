@@ -1,0 +1,16 @@
+---
+- name: Configure VPN server.
+  hosts: vpn
+  become: yes
+  roles:
+    - role: digitalocean-vpn
+      digitalocean_vpn_autoconfigure: yes
+
+- name: Configure VPN connection.
+  hosts: localhost
+  connection: local
+  vars:
+    digitalocean_vpn_client_cert_dir: openvpn_files/
+    digitalocean_vpn_nm_connection_name: "DigitalOcean VPN"
+  tasks:
+    - include: tasks/create_nm_connection.yml
