@@ -11,10 +11,6 @@ openvpn_server_options:
   - push "dhcp-option DNS 208.67.222.222"
   - push "dhcp-option DNS 208.67.220.220"
 
-# Hostname, used for delegate_to tasks fetching back keys
-openvpn_server: vpn
-
-# Don't automatically fetch private keys back to localhost.
 # Enable this if you want.
 digitalocean_vpn_fetch_keys: false
 
