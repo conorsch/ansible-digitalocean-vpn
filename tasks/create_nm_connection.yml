@@ -49,10 +49,11 @@
     remote = {{ hostvars['vpn'].ansible_default_ipv4.address }},
     cert = {{ client_config_dir_fullpath }}/laptop.crt,
     ca = {{ client_config_dir_fullpath }}/ca.crt,
-    comp-lzo = yes
+    comp-lzo = yes,
+    proto-tcp = yes
     "
 
 - name: Activate VPN connection.
   command: nmcli connection up id "{{ digitalocean_vpn_nm_connection_name }}"
   when: "'{{ digitalocean_vpn_nm_connection_name }}:activated' not in nmcli_connection_check.stdout"
-
+ 
