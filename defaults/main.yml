@@ -11,6 +11,7 @@ openvpn_proto: tcp
 
 openvpn_server_options:
   - push "redirect-gateway def1 bypass-dhcp"
+  - push "route 10.8.0.0 255.255.255.0"
   - push "dhcp-option DNS 208.67.222.222"
   - push "dhcp-option DNS 208.67.220.220"
 
